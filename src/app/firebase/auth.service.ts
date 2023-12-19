@@ -10,7 +10,7 @@ import { BehaviorSubject, exhaustMap, tap, of } from 'rxjs';
 })
 export class AuthService {
 
-  user$ = new BehaviorSubject<any | null>(null)
+  private _user$ = new BehaviorSubject<any | null>(null)
 
   constructor(private _afAuth: AngularFireAuth, public dialog: MatDialog) {
 
@@ -19,10 +19,10 @@ export class AuthService {
         if(user){
           console.log('user', user)
           localStorage.setItem('userData', JSON.stringify(user))
-          this.user$.next(user)
+          this._user$.next(user)
         } else {
           localStorage.removeItem('userData')
-          this.user$.next(null)
+          this._user$.next(null)
         }
       })
     ).subscribe()
@@ -46,11 +46,11 @@ export class AuthService {
    }
 
    getUserData$(){
-    return this.user$
+    return this._user$
    }
 
    isLoggedIn$(){
-    return this.user$.pipe(
+    return this._user$.pipe(
       exhaustMap(user=>{
         if(user){
           return of(true)
