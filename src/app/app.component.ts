@@ -25,7 +25,7 @@ export class AppComponent {
 
     this._router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
-        this.sidenav.close()
+        //this.sidenav.close()
         setTimeout(() => {
           // @ts-ignore 
           HSStaticMethods.autoInit();

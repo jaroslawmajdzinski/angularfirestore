@@ -17,6 +17,7 @@ export class AuthService {
     this._afAuth.authState.pipe(
       tap(user=>{
         if(user){
+          console.log('user', user)
           localStorage.setItem('userData', JSON.stringify(user))
           this.user$.next(user)
         } else {

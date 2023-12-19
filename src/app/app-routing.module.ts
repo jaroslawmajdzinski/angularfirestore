@@ -7,7 +7,7 @@ const routes: Routes = [
   {path: "", redirectTo: "/login", pathMatch: "full"},
   {path: "login", component: LoginReactiveComponent},
   {path: "register", component: LoginReactiveComponent},
-  {path: "upload", component: UploadComponent}
+  {path: "fileupload", component: UploadComponent}
 ];
 
 @NgModule({

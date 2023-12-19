@@ -22,7 +22,7 @@ import { MessageDialogComponent } from './components/message-dialog/message-dial
 import { MaterialModule } from './material/material/material.module';
 import { NavmenuComponent } from './components/navbar/navmenu/navmenu.component';
 import { UploadComponent } from './components/upload/upload.component';
-import {provideStorage, getStorage} from '@angular/fire/storage'
+import {AngularFireStorageModule} from '@angular/fire/compat/storage'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -50,7 +50,7 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     AngularFirestoreModule,
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    provideStorage(()=>getStorage()),
+    AngularFireStorageModule,
     BrowserAnimationsModule
   ],
   providers: [TailwindThemeService,{

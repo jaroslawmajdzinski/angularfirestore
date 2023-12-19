@@ -1,8 +1,8 @@
 .menu_toolbar{
-    @apply align-middle text-white invisible sm:visible;
+    @apply flex align-middle text-white invisible sm:visible;
 }
 .menu_side{
-    @apply flex flex-col align-middle;
+    @apply flex flex-col align-middle h-full;
     li{
         @apply py-2;
         .button{

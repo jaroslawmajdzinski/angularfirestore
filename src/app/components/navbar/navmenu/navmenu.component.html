@@ -1,5 +1,16 @@
 <ul [ngClass]="'menu_' + place">
 
-    <app-navmenu place="toolbar"/>
+    <ng-container *ngIf="!(auth.isLoggedIn$() | async);else login">
+     <li>
+          <a routerLink="/login" class="button" mat-button>Login</a>
+      
+      </li>
+      <li><a routerLink="/register" class="button" mat-button>Register</a></li>
+    </ng-container>
+
+    <ng-template #login>
+      <li><a routerLink="/fileupload" class="button" mat-button>File upload</a></li>
+      <li><a (click)="auth.logout()" class="button" mat-button>Logut</a></li>
+   </ng-template>
 
 </ul>
