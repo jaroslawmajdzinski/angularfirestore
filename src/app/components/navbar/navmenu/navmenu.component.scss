@@ -1,0 +1,12 @@
+.menu_toolbar{
+    @apply align-middle text-white invisible sm:visible;
+}
+.menu_side{
+    @apply flex flex-col align-middle;
+    li{
+        @apply py-2;
+        .button{
+            @apply w-full justify-start pl-4;
+        }
+    }
+}

@@ -1,0 +1,7 @@
+.toolbar{
+    @apply flex sm:justify-end justify-start align-middle w-full;
+}
+.button{
+    color: white;
+    @apply sm:hidden;
+}

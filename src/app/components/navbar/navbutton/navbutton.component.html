@@ -1,0 +1,11 @@
+<button
+  type="button"
+  [ngClass]="{
+    'p-3 transition-all duration-200  ': true,
+    'rotate-[-90deg]': open
+  }"
+   aria-label="Toggle navigation"
+  (click)="clickHandler()"
+>
+  <span class="fi-menu text-primary-500"></span>
+</button>

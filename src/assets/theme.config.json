@@ -1,0 +1,14 @@
+{
+    "primary": "#0068d9",
+    "primary-contrast": "#000000",
+    "secondary": "#2d6ca3", 
+    "secondary-contrast":"#FFFFFF",
+    "accent":"#F9C80E",
+    "accent-contrast": "#000000",
+    "danger":"#EA3546",
+    "danger-contrast": "#ffffff",
+    "success": "#6B25F7",
+    "success-contrast": "#FFFFFF",
+    "background": "#192F4E",
+    "background-contrast": "#ffffff"
+    }
