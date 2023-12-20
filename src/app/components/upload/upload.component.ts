@@ -9,6 +9,8 @@ import { FileuploadService } from 'src/app/firebase/fileupload.service';
 })
 export class UploadComponent {
 
+  fileList: {file: File, progress: number, inprogress: boolean, selected: boolean}[] = []
+
   @ViewChild('fileInput')fileInput!: ElementRef<HTMLInputElement>
  
   constructor(private _uploadService: FileuploadService){}
@@ -16,6 +18,9 @@ export class UploadComponent {
   handleFileUpload(){
     console.log(this.fileInput.nativeElement.files)
     const files = this.fileInput.nativeElement.files || []
+  
+    this.fileList = [...Array.from(files).map(item=>({file: item, progress: 0, inprogress: false, selected: false})), ...this.fileList]
+    /*
     if(files.length){
       const sub = this._uploadService.uploadFileToStorage(files[0])
       if(sub){
@@ -24,6 +29,22 @@ export class UploadComponent {
         })).subscribe()
       }
     }
+    */
+  }
 
+  uploadFile(idx: number){
+    this.fileList[idx].inprogress =  true
+    this._uploadService.uploadFileToStorage(this.fileList[idx].file)?.pipe(
+      tap((progress)=>{this.fileList[idx].progress = progress || 0 })
+    ).subscribe()
+  }
+
+  cancelUpload(){
+    this.fileList = [...this.fileList.filter(item=>!item.selected)]
+  }
+
+  selectHandler(event: Event, idx: number){
+    this.fileList[idx].selected = (event.target as HTMLInputElement).checked
+    this.fileList = [...this.fileList]
   }
 }

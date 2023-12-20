@@ -104,6 +104,8 @@ $custom-primary: mat.define-palette($primary-palette, 500);
 $custom-accent: mat.define-palette($accent-palette, A200, A100, A400);
 $custom-warn: mat.define-palette($warn-palette);
 
+
+
 $custom-theme: mat.define-light-theme((
     color: (
         primary: $custom-primary,
@@ -114,7 +116,13 @@ $custom-theme: mat.define-light-theme((
     density: 0,
 ));
 
+
 @include mat.core-theme($custom-theme);
 @include mat.button-theme($custom-theme);
 @include mat.toolbar-theme($custom-theme);
 @include mat.sidenav-theme($custom-theme);
+@include mat.list-theme($custom-theme);
+
+//@include mat.progress-bar-theme($custom-progress-theme);
+//@include mat.all-component-themes($custom-theme);
+

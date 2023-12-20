@@ -1,7 +1,7 @@
 import {  Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { EMPTY, Observable, concatMap, exhaustMap, finalize, tap, concat } from 'rxjs';
+import { EMPTY, Observable, concatMap, exhaustMap, finalize, tap, concat, takeUntil, Subject } from 'rxjs';
 import { User } from './user.model';
 
 @Injectable({
@@ -30,10 +30,10 @@ export class FileuploadService {
       const filePath = `${this._rootPath}/${this._user['multiFactor']['user'].uid}/${file.name}`
       const storageRef = this._storage.ref(filePath)  
       const uploadTask = this._storage.upload(filePath, file);  
-
+     
       concat (uploadTask.snapshotChanges(), storageRef.getDownloadURL()).pipe(
-           tap(url=>console.log(url)))
-        .subscribe()
+            tap(url=>console.log(url))
+           ).subscribe()
 
      return uploadTask.percentageChanges()   
 
@@ -42,5 +42,7 @@ export class FileuploadService {
     return null
 
     }
+
+    
 
   }

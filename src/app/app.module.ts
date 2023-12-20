@@ -22,7 +22,8 @@ import { MessageDialogComponent } from './components/message-dialog/message-dial
 import { MaterialModule } from './material/material/material.module';
 import { NavmenuComponent } from './components/navbar/navmenu/navmenu.component';
 import { UploadComponent } from './components/upload/upload.component';
-import {AngularFireStorageModule} from '@angular/fire/compat/storage'
+import {AngularFireStorageModule} from '@angular/fire/compat/storage';
+import { SelectedPipe } from './components/upload/selected.pipe'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -38,7 +39,8 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     LoginReactiveComponent,
     MessageDialogComponent,
     NavmenuComponent,
-    UploadComponent
+    UploadComponent,
+    SelectedPipe
   ],
   imports: [
     BrowserModule,
