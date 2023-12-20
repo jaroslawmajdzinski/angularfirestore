@@ -33,6 +33,10 @@ export class UploadComponent {
     */
   }
 
+  listAllFiles(){
+    this._uploadService.listAllFiles().subscribe()
+  }
+
   uploadFile(idx: number){
     this.fileList[idx].inprogress =  true
     this._uploadService.uploadFileToStorage(this.fileList[idx].file)?.pipe(

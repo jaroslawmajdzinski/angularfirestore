@@ -1,7 +1,13 @@
 <mat-dialog-content>
-
-    <div>{{data.message}}</div>
+  <div class="text-white">{{ data.message }}</div>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button (click)="onOkClick()" color="warn" mat-flat-button>Ok</button>
+  <button
+    (click)="onOkClick()"
+    color="primary"
+    class="text-white w-[100px]"
+    appButton="primary"
+  >
+    Ok
+  </button>
 </mat-dialog-actions>

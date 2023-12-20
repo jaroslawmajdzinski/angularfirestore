@@ -19,10 +19,8 @@ export class AppComponent {
 
   ngOnInit(){
 
-    //this._authService.signIn("rabarbar@gmail.com", "ramka123").finally()
-
+   
   
-
     this._router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         //this.sidenav.close()
