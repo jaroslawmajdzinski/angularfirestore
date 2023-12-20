@@ -6,13 +6,26 @@
     multiple
     #fileInput
   />
-  <button (click)="fileInput.click()" mat-flat-button>Chose file</button>
-  
-  <button mat-flat-button color="accent" (click)="cancelUpload()" *ngIf="this.fileList | selected">Cancel upload</button>
   
   <div class="grid grid-cols-7 gap-y-1  text-black">
+    
+    <div class="col-span-5 bg-primary-100"></div>
+    <div class="col-span-2 p-2 bg-primary-100">
+       <div class="flex justify-end"> 
+        <button (click)="fileInput.click()" mat-flat-button>Chose file</button>
+    </div> 
+    </div>
+
+    <div class="pl-4 p-2 bg-primary-500"><input (click)="selectAllHandler($event)" type="checkbox" #selectAll/></div>
+    <div class="col-span-4 bg-primary-500"></div>
+    <div class="col-span-2 bg-primary-500">
+       <div class="flex justify-end p-2"> 
+        <button mat-flat-button color="accent" (click)="cancelUpload()" *ngIf="this.fileList | selected">Cancel upload</button>
+    </div> 
+    </div>
+    
     <ng-container *ngFor="let item of fileList; let idx=index">
-    <div class="bg-primary-50 p-2 pl-4"><input type="checkbox" (click)="selectHandler($event, idx)"/></div>
+    <div class="bg-primary-50 p-2 pl-4"><input type="checkbox" [checked]="item.selected" (click)="selectHandler($event, idx)"/></div>
     <div class="col-span-3 p-2 bg-primary-50" >{{item.file.name }}</div>
     <div class="col-span-2 pt-4 bg-primary-50"><mat-progress-bar class="progress" [value]="item.progress" mode="determinate"></mat-progress-bar></div>    
     <div (click)="uploadFile(idx)" class="text-end bg-primary-50">

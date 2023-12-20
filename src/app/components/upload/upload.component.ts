@@ -12,7 +12,8 @@ export class UploadComponent {
   fileList: {file: File, progress: number, inprogress: boolean, selected: boolean}[] = []
 
   @ViewChild('fileInput')fileInput!: ElementRef<HTMLInputElement>
- 
+  @ViewChild('selectAll')selectAll!: ElementRef<HTMLInputElement>
+
   constructor(private _uploadService: FileuploadService){}
  
   handleFileUpload(){
@@ -41,10 +42,18 @@ export class UploadComponent {
 
   cancelUpload(){
     this.fileList = [...this.fileList.filter(item=>!item.selected)]
+    this.selectAll.nativeElement.checked = false
   }
 
   selectHandler(event: Event, idx: number){
     this.fileList[idx].selected = (event.target as HTMLInputElement).checked
+    this.fileList = [...this.fileList]
+  }
+
+  selectAllHandler(event: Event){
+    this.fileList.forEach(item=>{
+      item.selected = (event.target as HTMLInputElement).checked 
+    })
     this.fileList = [...this.fileList]
   }
 }

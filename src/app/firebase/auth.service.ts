@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { MatDialog } from '@angular/material/dialog';
+import { Route, Router } from '@angular/router';
 import { BehaviorSubject, exhaustMap, tap, of } from 'rxjs';
 
 
@@ -12,7 +13,7 @@ export class AuthService {
 
   private _user$ = new BehaviorSubject<any | null>(null)
 
-  constructor(private _afAuth: AngularFireAuth, public dialog: MatDialog) {
+  constructor(private _afAuth: AngularFireAuth, public dialog: MatDialog, private _router: Router) {
 
     this._afAuth.authState.pipe(
       tap(user=>{
@@ -20,13 +21,14 @@ export class AuthService {
           console.log('user', user)
           localStorage.setItem('userData', JSON.stringify(user))
           this._user$.next(user)
+          this._router.navigate(['/fileupload'])
         } else {
           localStorage.removeItem('userData')
           this._user$.next(null)
+          this._router.navigate(['/login'])
         }
       })
     ).subscribe()
-
 
    }
 
@@ -41,7 +43,7 @@ export class AuthService {
 
    logout(){
     this._afAuth.signOut().then(()=>{
-
+      
     })
    }
 
