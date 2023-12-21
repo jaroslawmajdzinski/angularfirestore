@@ -1,3 +1,12 @@
 .header{
     @apply bg-primary-50;
 }
+.content{
+    @apply p-0 m-0;
+    &:last-child{
+        @apply p-0;
+    }
+}
+.button{
+    @apply text-white ml-4 mr-2;
+}

@@ -1,12 +1,26 @@
 <mat-card class="overflow-hidden" >
     
-    <mat-card-header class="bg-primary-500"><h2 class="text-white">Your files</h2></mat-card-header>
-    <mat-card-content>
-        <div class="grid grid-cols-6">
-            <ng-container *ngFor="let item of filesManagement.listAllFiles() | async">
-                  <div><input type="checkbox"/></div>  
-                   <div class="col-span-5">{{item.name}}</div> 
-            </ng-container>
+    <mat-card-header class="bg-primary-100"><h2 class="text-primary-600">Your files</h2></mat-card-header>
+    <mat-card-content class="content">
+        <div class="grid grid-cols-7 gap-y-1 mt-1">
+        
+        <div class="p-2 py-3 bg-primary-500"><input (click)="selectAllHandler($event)" type="checkbox"/></div>
+        <div class="col-span-4 bg-primary-500 text-white py-3">File name</div>
+        <div class="col-span-2 bg-primary-500">
+            <div class="h-full flex justify-end items-center" *ngIf="filesList | selected">
+                
+                <button  mat-flat-button><mat-icon>download</mat-icon>Upload</button>
+                
+                <button (click)="deleteHandler()" mat-flat-button color="warn" class="button"><mat-icon>delete</mat-icon>Delete</button>
+                
+            </div>
+        </div>    
+            <ng-container *ngFor="let item of filesList;let idx=index">
+                   <div class="bg-primary-50 p-2"><input [checked]="item.selected" (click)="selectOneHandler($event, idx)" type="checkbox"/></div>  
+                   <div class="col-span-5 bg-primary-50 py-2">{{item.fileName}}</div> 
+                   <div class="bg-primary-50"><div class="flex justify-end items-center h-full pr-4" (click)="deleteOneHandler(idx)"><mat-icon class=" text-primary-500 hover:text-primary-300 cursor-pointer">delete</mat-icon></div></div> 
+                </ng-container>
+        
         </div>
     </mat-card-content>  
 </mat-card>

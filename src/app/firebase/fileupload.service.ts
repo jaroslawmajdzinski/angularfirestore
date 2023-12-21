@@ -1,9 +1,9 @@
 import {  Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AngularFireStorage, AngularFireStorageReference } from '@angular/fire/compat/storage';
 import { tap, concat, from, map } from 'rxjs';
 import { User } from './user.model';
-import { getStorage, ref, listAll } from "firebase/storage";
+import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
 
 
 @Injectable({
@@ -46,14 +46,20 @@ export class FileuploadService {
     }
 
     listAllFiles(){
-      const storage = getStorage();
       // @ts-ignore 
-      const listRef = ref(storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}`)
+      const listRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}`)
       return from(listAll(listRef)).pipe(
         map(res=>{
-         return [...res.items]
+           return res.items.map((itemRef)=>({fileName: itemRef.name}))
         })
       )
+      
     }    
+
+    deleteFile(fileName: string){
+      // @ts-ignore 
+      const fileRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}/${fileName}` )
+      return from(deleteObject(fileRef))
+    }
 
   }
