@@ -1,13 +1,9 @@
-<div class="w-full h-full flex flex-col justify-center align-middle">
-  <input
-    type="file"
-    (change)="handleFileUpload()"
-    class="invisible"
-    multiple
-    #fileInput
-  />
+<mat-card>
+   
+    <div class="w-full  flex flex-col justify-center align-middle rounded-sm overflow-hidden">
     
-   <button (click)="listAllFiles()">List</button>
+    
+   
 
   <div class="grid grid-cols-7 gap-y-1  text-black">
     
@@ -29,12 +25,22 @@
     <ng-container *ngFor="let item of fileList; let idx=index">
     <div class="bg-primary-50 p-2 pl-4"><input type="checkbox" [checked]="item.selected" (click)="selectHandler($event, idx)"/></div>
     <div class="col-span-3 p-2 bg-primary-50" >{{item.file.name }}</div>
-    <div class="col-span-2 pt-4 bg-primary-50"><mat-progress-bar class="progress" [value]="item.progress" mode="determinate"></mat-progress-bar></div>    
+    <div class="col-span-2 pt-4 bg-primary-50"><mat-progress-bar class="my-progress-bar" [value]="item.progress" mode="determinate"></mat-progress-bar></div>    
     <div (click)="uploadFile(idx)" class="text-end bg-primary-50">
         
-        <mat-icon class="text-primary-400 hover:text-primary-500 icon-size" *ngIf="!item.inprogress">play_arrow</mat-icon>
+        <mat-icon class="text-primary-400 hover:text-primary-500 icon-size" [ngClass]="{'hover:text-primary-200 animate-pulse': item.inprogress && item.progress<100, 'text-primary-200 hover:text-primary-200': item.progress===100}" >play_arrow</mat-icon>
     
     </div>
 </ng-container>
 </div>
 </div>
+
+</mat-card>
+<input
+    class="absolute z-30"
+    type="file"
+    (change)="handleFileUpload()"
+    class="invisible"
+    multiple
+    #fileInput
+  />

@@ -124,7 +124,7 @@ $custom-theme: mat.define-light-theme((
 @include mat.dialog-theme($custom-theme);
 @include mat.list-theme($custom-theme);
 @include mat.input-theme($custom-theme);
-
-//@include mat.progress-bar-theme($custom-progress-theme);
+@include mat.card-theme($custom-theme);
+@include mat.progress-bar-theme($custom-theme);
 //@include mat.all-component-themes($custom-theme);
 

@@ -9,6 +9,7 @@ import { MatIconModule} from '@angular/material/icon'
 import {MatListModule} from '@angular/material/list'
 import {MatProgressBarModule} from '@angular/material/progress-bar'
 import {MatGridListModule} from '@angular/material/grid-list';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [],
@@ -22,7 +23,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatIconModule,
     MatListModule,
     MatProgressBarModule,
-    MatGridListModule
+    MatGridListModule,
+    MatCardModule
    ],exports:[
     MatDialogModule,
     MatInputModule,
@@ -32,7 +34,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatIconModule,
     MatListModule,
     MatProgressBarModule,
-    MatGridListModule
+    MatGridListModule,
+    MatCardModule
    
   ]
 })

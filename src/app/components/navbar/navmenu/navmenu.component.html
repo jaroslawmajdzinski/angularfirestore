@@ -2,15 +2,19 @@
 
     <ng-container *ngIf="!(auth.isLoggedIn$() | async);else login">
      <li>
-          <a routerLink="/login" class="button" mat-button>Login</a>
+          <a routerLink="/login" routerLinkActive="button-active"  class="button" mat-button>Login</a>
       
       </li>
-      <li><a routerLink="/register" class="button" mat-button>Register</a></li>
+      <li><a routerLink="/register" routerLinkActive="button-active" class="button" mat-button>Register</a></li>
     </ng-container>
 
     <ng-template #login>
-      <li><a routerLink="/fileupload" class="button" mat-button>File upload</a></li>
-      <li><a (click)="auth.logout()" class="button" mat-button>Logut</a></li>
+      <li><a routerLink="/fileupload" routerLinkActive="button-active" class="button" mat-button>Upload files</a></li>
+      <li><a routerLink="/files" routerLinkActive="button-active" class="button" mat-button>Files managemend</a></li>
+      <li><a (click)="auth.logout()" routerLinkActive="button-active" class="button logout" mat-button>
+        <mat-icon>logout</mat-icon>
+        Logut
+    </a></li>
    </ng-template>
 
 </ul>

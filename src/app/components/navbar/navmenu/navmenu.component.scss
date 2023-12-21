@@ -1,12 +1,26 @@
 .menu_toolbar{
     @apply flex align-middle text-white invisible sm:visible;
+    li{
+        @apply p-1;
+        .button-active{
+        @apply bg-primary-600;
+        }
+        .logout{
+        @apply pl-6;
+        }
+    }  
 }
 .menu_side{
     @apply flex flex-col align-middle h-full;
     li{
-        @apply py-2;
+        @apply py-1;
         .button{
-            @apply w-full justify-start pl-4;
+            @apply w-full justify-start ;
+        
+        }
+        .logout{
+            @apply bg-danger-200;
         }
     }
 }
+ 

@@ -1,11 +1,12 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { tap } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss']
+  styleUrls: ['./upload.component.scss'],
+  //encapsulation: ViewEncapsulation.None
 })
 export class UploadComponent {
 
@@ -38,6 +39,7 @@ export class UploadComponent {
   }
 
   uploadFile(idx: number){
+    if(this.fileList[idx].inprogress===true )return
     this.fileList[idx].inprogress =  true
     this._uploadService.uploadFileToStorage(this.fileList[idx].file)?.pipe(
       tap((progress)=>{this.fileList[idx].progress = progress || 0 })

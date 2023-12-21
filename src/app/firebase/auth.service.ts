@@ -18,7 +18,7 @@ export class AuthService {
     this._afAuth.authState.pipe(
       tap(user=>{
         if(user){
-          console.log('user', user)
+          //console.log('user', user)
           localStorage.setItem('userData', JSON.stringify(user))
           this._user$.next(user)
           this._router.navigate(['/fileupload'])

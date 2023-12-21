@@ -6,11 +6,13 @@
     </div>
     
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="min-h-[100vh]" >
     <app-navbar (sideNavToggle)="sideNav.toggle()" ></app-navbar>
+    <div class="container mx-auto mt-6" >  
     <main>
       <router-outlet></router-outlet>
     </main>
+  </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

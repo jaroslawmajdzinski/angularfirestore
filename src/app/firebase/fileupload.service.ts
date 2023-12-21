@@ -1,7 +1,7 @@
 import {  Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { tap, concat, from } from 'rxjs';
+import { tap, concat, from, map } from 'rxjs';
 import { User } from './user.model';
 import { getStorage, ref, listAll } from "firebase/storage";
 
@@ -50,8 +50,8 @@ export class FileuploadService {
       // @ts-ignore 
       const listRef = ref(storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}`)
       return from(listAll(listRef)).pipe(
-        tap(res=>{
-          console.log(res)
+        map(res=>{
+         return [...res.items]
         })
       )
     }    

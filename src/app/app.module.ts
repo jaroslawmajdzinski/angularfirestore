@@ -21,9 +21,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 import { MaterialModule } from './material/material/material.module';
 import { NavmenuComponent } from './components/navbar/navmenu/navmenu.component';
-import { UploadComponent } from './components/upload/upload.component';
+import { UploadComponent } from './components/firebase/upload/upload.component';
 import {AngularFireStorageModule} from '@angular/fire/compat/storage';
-import { SelectedPipe } from './components/upload/selected.pipe'
+import { SelectedPipe } from './components/firebase/upload/selected.pipe';
+import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -40,7 +41,8 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     MessageDialogComponent,
     NavmenuComponent,
     UploadComponent,
-    SelectedPipe
+    SelectedPipe,
+    FilesmanagementComponent
   ],
   imports: [
     BrowserModule,
