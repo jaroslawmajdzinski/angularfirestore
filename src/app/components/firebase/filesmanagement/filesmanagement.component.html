@@ -34,7 +34,12 @@
             *ngIf="!item.isDirectory"
             />
         </div>
-        <div class="col-span-5 bg-primary-50 py-2">{{ item.name }}<span *ngIf="item.isDirectory">/</span></div>
+        
+        <div class="col-span-5 bg-primary-50 py-2 cursor-pointer" (click)="openDirectory(idx)" *ngIf="item.isDirectory;else file">{{ item.fullPath }}<span>/</span></div>
+        <ng-template #file>
+          <div class="col-span-5 bg-primary-50 py-2">{{ item.name }}</div>
+        </ng-template>
+
         <div class="bg-primary-50">
           <div
             class="flex justify-end items-center h-full pr-4"

@@ -11,6 +11,8 @@ export class FilesmanagementComponent implements OnInit{
 
 filesList: {name: string, fullPath: string, isDirectory: boolean, selected: boolean}[] = []  
 sub!: Subscription
+path: string[] = []
+currPath = "/"
 
 constructor(public _storageService: FileuploadService){}
 
@@ -18,8 +20,8 @@ constructor(public _storageService: FileuploadService){}
    this.sub = this.getListHandler().subscribe()
  }
 
- getListHandler(){
-  return this._storageService.listAllFiles().pipe(
+ getListHandler(directory = ""){
+  return this._storageService.listAllFiles(directory).pipe(
     tap(items=>this.filesList = [...items.map(item=>({...item, selected: false}))])
    )
  }
@@ -35,8 +37,8 @@ constructor(public _storageService: FileuploadService){}
 }
 
 deleteOneHandler(idx: number){
-  this._storageService.deleteFile(this.filesList[idx].name).pipe(
-    concatMap(()=>this.getListHandler()),
+  this._storageService.deleteFile(this.filesList[idx].fullPath).pipe(
+    concatMap(()=>this.getListHandler(this.path.join('/'))),
     catchError(err=>{
       console.error(err.message)
       return EMPTY
@@ -45,15 +47,26 @@ deleteOneHandler(idx: number){
 }
 
 deleteHandler(){
- forkJoin(this.filesList.filter(item=>item.selected && !item.isDirectory).map(item=>this._storageService.deleteFile(item.name)))
+ forkJoin(this.filesList.filter(item=>item.selected && !item.isDirectory).map(item=>this._storageService.deleteFile(item.fullPath)))
   .pipe(
-    concatMap(()=>this.getListHandler()),
+    concatMap(()=>this.getListHandler(this.path.join('/'))),
     catchError(err=>{
       console.error(err.message)
       return EMPTY
     })
   )
  .subscribe()
+}
+
+
+
+openDirectory(idx: number){
+    if(this.filesList[idx].fullPath===".."){
+      this.path.pop()
+    }else{
+      this.path.push(this.filesList[idx].name)
+    }
+    this.getListHandler(this.path.join('/')).subscribe()
 }
 
 }
