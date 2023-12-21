@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AngularFireStorage, AngularFireStorageReference } from '@angular/fire/compat/storage';
 import { tap, concat, from, map } from 'rxjs';
 import { User } from './user.model';
-import { getStorage, ref, listAll, deleteObject } from "firebase/storage";
+import { uploadString, ref, listAll, deleteObject } from "firebase/storage";
 
 
 @Injectable({
@@ -45,12 +45,21 @@ export class FileuploadService {
 
     }
 
-    listAllFiles(){
+    createDirectory(fullPath: string){
+      // @ts-ignore
+      const storageRef = ref(`${fullPath}/.dir`)  
+      return from(uploadString(storageRef, ''));  
+    }
+
+    listAllFiles(directory = ""){
       // @ts-ignore 
-      const listRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}`)
+      const listRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}` + `${directory? `/${directory}` : '' }`)
       return from(listAll(listRef)).pipe(
         map(res=>{
-           return res.items.map((itemRef)=>({fileName: itemRef.name}))
+           console.log('prefixes', res.prefixes, 'items', res.items)
+           const folders = res.prefixes.map(item=>({name: item.name, fullPath: item.fullPath, isDirectory: true}))
+           const files = res.items.filter(item=>item.name!=='.dir').map((itemRef)=>({name: itemRef.name, fullPath: itemRef.fullPath, isDirectory: false})) 
+           return [...folders, ...files]
         })
       )
       

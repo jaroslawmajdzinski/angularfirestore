@@ -9,7 +9,7 @@ import { FileuploadService } from 'src/app/firebase/fileupload.service';
 })
 export class FilesmanagementComponent implements OnInit{
 
-filesList: {fileName: string, selected: boolean}[] = []  
+filesList: {name: string, fullPath: string, isDirectory: boolean, selected: boolean}[] = []  
 sub!: Subscription
 
 constructor(public _storageService: FileuploadService){}
@@ -35,7 +35,7 @@ constructor(public _storageService: FileuploadService){}
 }
 
 deleteOneHandler(idx: number){
-  this._storageService.deleteFile(this.filesList[idx].fileName).pipe(
+  this._storageService.deleteFile(this.filesList[idx].name).pipe(
     concatMap(()=>this.getListHandler()),
     catchError(err=>{
       console.error(err.message)
@@ -45,7 +45,7 @@ deleteOneHandler(idx: number){
 }
 
 deleteHandler(){
- forkJoin(this.filesList.filter(item=>item.selected).map(item=>this._storageService.deleteFile(item.fileName)))
+ forkJoin(this.filesList.filter(item=>item.selected && !item.isDirectory).map(item=>this._storageService.deleteFile(item.name)))
   .pipe(
     concatMap(()=>this.getListHandler()),
     catchError(err=>{
