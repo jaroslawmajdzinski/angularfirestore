@@ -4,6 +4,24 @@
   >
   <mat-card-content class="content">
     <div class="grid grid-cols-7 gap-y-1 mt-1">
+      <div class="col-span-7  text-lg text-primary-700 flex bg-slate-100">
+        
+            <span class="inline-block pl-2 pt-[7px]"><mat-icon>folder_open</mat-icon></span>
+        
+        <div class="p-2">
+           <span class="cursor-pointer" [ngClass]="{'hover:text-primary-500 underline': path.length}" (click)="goToDirectory(-1)">Root</span>
+
+          <span
+            class="cursor-pointer" [ngClass]="{'hover:text-primary-500': !last}"
+            (click)="goToDirectory(idx)"
+            *ngFor="let dir of path; let idx = index; let last = last"
+          >
+          / 
+            <span [ngClass]="{ 'underline': !last }">{{ dir }}</span
+            ></span
+          >
+        </div>
+      </div>
       <div class="p-2 py-3 bg-primary-500">
         <input (click)="selectAllHandler($event)" type="checkbox" />
       </div>
@@ -32,10 +50,16 @@
             (click)="selectOneHandler($event, idx)"
             type="checkbox"
             *ngIf="!item.isDirectory"
-            />
+          />
         </div>
-        
-        <div class="col-span-5 bg-primary-50 py-2 cursor-pointer" (click)="openDirectory(idx)" *ngIf="item.isDirectory;else file">{{ item.fullPath }}<span>/</span></div>
+
+        <div
+          class="col-span-5 bg-primary-50 py-2 cursor-pointer"
+          (click)="openDirectory(idx)"
+          *ngIf="item.isDirectory; else file"
+        >
+          {{ item.fullPath }}<span>/</span>
+        </div>
         <ng-template #file>
           <div class="col-span-5 bg-primary-50 py-2">{{ item.name }}</div>
         </ng-template>
@@ -45,7 +69,7 @@
             class="flex justify-end items-center h-full pr-4"
             (click)="deleteOneHandler(idx)"
             *ngIf="!item.isDirectory"
-            >
+          >
             <mat-icon
               class="text-primary-500 hover:text-primary-300 cursor-pointer"
               >delete</mat-icon

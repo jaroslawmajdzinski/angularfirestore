@@ -24,7 +24,9 @@ import { NavmenuComponent } from './components/navbar/navmenu/navmenu.component'
 import { UploadComponent } from './components/firebase/upload/upload.component';
 import {AngularFireStorageModule} from '@angular/fire/compat/storage';
 import { SelectedPipe } from './components/firebase/upload/selected.pipe';
-import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component'
+import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component';
+import { ActionareaComponent } from './components/message-dialog/actionarea/actionarea.component';
+import { ButtontestComponent } from './components/elements/style.directives/buttontest/buttontest.component'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -42,7 +44,9 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     NavmenuComponent,
     UploadComponent,
     SelectedPipe,
-    FilesmanagementComponent
+    FilesmanagementComponent,
+    ActionareaComponent,
+    ButtontestComponent
   ],
   imports: [
     BrowserModule,

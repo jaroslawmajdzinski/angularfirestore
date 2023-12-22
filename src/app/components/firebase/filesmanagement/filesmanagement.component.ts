@@ -66,7 +66,15 @@ openDirectory(idx: number){
     }else{
       this.path.push(this.filesList[idx].name)
     }
+    
     this.getListHandler(this.path.join('/')).subscribe()
+}
+
+goToDirectory(idx: number){
+  
+  console.log(idx, this.path.slice(0,idx + 1))
+  this.path = this.path.slice(0, idx + 1)
+  this.getListHandler(this.path.join('/')).subscribe()
 }
 
 }
