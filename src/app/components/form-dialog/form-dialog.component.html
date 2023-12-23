@@ -1,0 +1,10 @@
+<div class="title" mat-dialog-title >Create direcory</div>
+<mat-dialog-content class="content">
+  <div class="text-white">
+    <label class="pr-2" for="dirname">Directory name:</label>
+    <input class="input" #dirname/>
+</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <app-actionarea (clickedButton)="onClick($event)" [actionConfig]="actionAreaConfig"/>
+</mat-dialog-actions>

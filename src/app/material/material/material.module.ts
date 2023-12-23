@@ -24,7 +24,8 @@ import {MatCardModule} from '@angular/material/card';
     MatListModule,
     MatProgressBarModule,
     MatGridListModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
    ],exports:[
     MatDialogModule,
     MatInputModule,
@@ -35,7 +36,8 @@ import {MatCardModule} from '@angular/material/card';
     MatListModule,
     MatProgressBarModule,
     MatGridListModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
    
   ]
 })

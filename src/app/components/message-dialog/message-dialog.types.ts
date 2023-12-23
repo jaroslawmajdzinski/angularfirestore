@@ -7,5 +7,5 @@ export interface IActionAreaConfig {
 export interface IDialogConfig{
     title: string;
     message: string;
-    actionArea: IActionAreaConfig[]
+    actionAreaConfig: IActionAreaConfig[]
 }

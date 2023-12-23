@@ -2,6 +2,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ButtonDirective } from './button.directive';
 import { ButtontestComponent } from './buttontest/buttontest.component';
+import {  Renderer2 } from '@angular/core';
 
 describe('ButtonDirective', () => {
   
@@ -10,8 +11,9 @@ describe('ButtonDirective', () => {
 
   beforeEach(()=>{
     fixture = TestBed.configureTestingModule({
-      imports: [ButtonDirective,ButtontestComponent ]
-
+      imports: [ ],
+      declarations: [ButtonDirective,ButtontestComponent],
+      providers: [Renderer2],
     }).createComponent(ButtontestComponent)
     fixture.detectChanges()
     testButton = fixture.nativeElement.querySelector('[appButton=primary')

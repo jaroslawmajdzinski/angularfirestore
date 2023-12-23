@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { IDialogConfig } from './message-dialog.types';
 
 @Component({
   selector: 'app-message-dialog',
@@ -7,9 +8,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./message-dialog.component.scss']
 })
 export class MessageDialogComponent {
-  constructor (public dialogRef: MatDialogRef<HTMLElement>, @Inject(MAT_DIALOG_DATA) public data: {message: string}){}
+  constructor (public dialogRef: MatDialogRef<MessageDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: IDialogConfig){}
 
-  onOkClick(){
-    this.dialogRef.close()
+  onOkClick(e: {label: string, dismiss: boolean | undefined}){
+    this.dialogRef.close(e.dismiss? 'dismiss' : e.label )
   }
 }

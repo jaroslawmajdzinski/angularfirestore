@@ -92,7 +92,11 @@ export class LoginReactiveComponent implements OnInit {
           this.isLogin ? 'logged in' : 'registered'
         } successfully!`;
         const dialogRef = this.dialog.open(MessageDialogComponent, {
-          data: { message: message },
+          data: { 
+            title: "Info",
+            message: message, 
+            actionAreaConfig: [{label: "Ok", color: "primary", dismiss: true }]
+          },
         });
         console.log(res);
       })
@@ -100,7 +104,7 @@ export class LoginReactiveComponent implements OnInit {
         //console.log(error.message);
         const message = 'Email or password problem\n' + error.message ;
         const dialogRef = this.dialog.open(MessageDialogComponent, {
-          data: { message: message },
+          data: { title: "Error", message: message, actionAreaConfig: [{label: "Ok", color: "primary", dismiss: true }] },
         });
       });
   }

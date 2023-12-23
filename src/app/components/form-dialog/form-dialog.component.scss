@@ -11,3 +11,7 @@
 .content{
   @apply pt-3;
 }
+
+.input{
+    @apply outline-none rounded-sm p-1 focus:border-primary-400 border-2 text-primary-700;
+}

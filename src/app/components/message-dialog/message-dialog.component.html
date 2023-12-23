@@ -1,13 +1,7 @@
-<mat-dialog-content>
+<div class="title" mat-dialog-title >{{data.title}}</div>
+<mat-dialog-content class="content">
   <div class="text-white">{{ data.message }}</div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button
-    (click)="onOkClick()"
-    color="primary"
-    class="text-white w-[100px]"
-    appButton="primary"
-  >
-    Ok
-  </button>
+  <app-actionarea (clickedButton)="onOkClick($event)" [actionConfig]="data.actionAreaConfig"/>
 </mat-dialog-actions>

@@ -6,7 +6,7 @@ import {
 } from '@angular/fire/compat/storage';
 import { tap, concat, from, map, last } from 'rxjs';
 import { User } from './user.model';
-import { uploadString, ref, listAll, deleteObject } from 'firebase/storage';
+import { uploadString, ref, listAll, deleteObject, getMetadata } from 'firebase/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -47,8 +47,9 @@ export class FileuploadService {
   }
 
   createDirectory(fullPath: string) {
+    console.log(fullPath)
     // @ts-ignore
-    const storageRef = ref(`${fullPath}/.dir`);
+    const storageRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}${fullPath.length>1? `/${fullPath}` : ""}/.dir`);
     return from(uploadString(storageRef, ''));
   }
 
@@ -64,7 +65,7 @@ export class FileuploadService {
           fullPath: item.name,
           isDirectory: true,
         }));
-
+        //prepare path if has parent
         let lastDir = [];
         if (directory) {
           let tmp = directory.split('/');
@@ -93,4 +94,12 @@ export class FileuploadService {
     console.log(fullPath)
     return from(deleteObject(fileRef));
   }
+
+  getFileMetadata(fullPath: string){
+    //fullPath contains filename
+    const fileRef = ref(this._storage.storage, fullPath)
+    return from(getMetadata(fileRef))
+  }
+
 }
+

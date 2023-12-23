@@ -4,7 +4,8 @@
   >
   <mat-card-content class="content">
     <div class="grid grid-cols-7 gap-y-1 mt-1">
-      <div class="col-span-7  text-lg text-primary-700 flex bg-slate-100">
+      
+    <div class="col-span-6  text-lg text-primary-700 flex bg-slate-100">
         
             <span class="inline-block pl-2 pt-[7px]"><mat-icon>folder_open</mat-icon></span>
         
@@ -21,7 +22,15 @@
             ></span
           >
         </div>
-      </div>
+        
+    </div>
+    <div class="bg-slate-100">
+        <div class="flex justify-end">
+            <span (click)="createDirctory()" class="pr-4 p-2"><mat-icon class="text-primary-500 hover:text-primary-400 cursor-pointer">create_new_folder</mat-icon>
+        
+            </span>
+        </div>    
+    </div> 
       <div class="p-2 py-3 bg-primary-500">
         <input (click)="selectAllHandler($event)" type="checkbox" />
       </div>
