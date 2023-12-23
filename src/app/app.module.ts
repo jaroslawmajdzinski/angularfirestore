@@ -27,7 +27,9 @@ import { SelectedPipe } from './components/firebase/upload/selected.pipe';
 import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component';
 import { ActionareaComponent } from './components/message-dialog/actionarea/actionarea.component';
 import { ButtontestComponent } from './components/elements/style.directives/buttontest/buttontest.component';
-import { FormDialogComponent } from './components/form-dialog/form-dialog.component'
+import { FormDialogComponent } from './components/form-dialog/form-dialog.component';
+import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
+import { PathComponent } from './components/firebase/filesmanagement/path/path.component'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -48,7 +50,9 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FilesmanagementComponent,
     ActionareaComponent,
     ButtontestComponent,
-    FormDialogComponent
+    FormDialogComponent,
+    FileinfoComponent,
+    PathComponent
   ],
   imports: [
     BrowserModule,

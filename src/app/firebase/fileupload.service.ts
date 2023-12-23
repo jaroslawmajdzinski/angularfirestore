@@ -4,9 +4,11 @@ import {
   AngularFireStorage,
   AngularFireStorageReference,
 } from '@angular/fire/compat/storage';
-import { tap, concat, from, map, last } from 'rxjs';
-import { User } from './user.model';
-import { uploadString, ref, listAll, deleteObject, getMetadata } from 'firebase/storage';
+import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject } from 'rxjs';
+import { User } from './models/user.model';
+import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';
+import { HttpClient } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +19,9 @@ export class FileuploadService {
 
   constructor(
     private _auth: AuthService,
-    private _storage: AngularFireStorage
-  ) {
+    private _storage: AngularFireStorage,
+    private _httpClient: HttpClient
+    ) {
     this._auth
       .getUserData$()
       .pipe(
@@ -100,6 +103,22 @@ export class FileuploadService {
     const fileRef = ref(this._storage.storage, fullPath)
     return from(getMetadata(fileRef))
   }
+
+  downloadFile(fullPathWithName: string){
+    console.log(fullPathWithName)
+    // @ts-ignore
+   const filesURLS$ = new Observable<string>((subscriber)=>{
+      const fileRef = ref(this._storage.storage, fullPathWithName)
+      getDownloadURL(fileRef).then(url=>{
+        subscriber.next(url)
+        subscriber.complete()
+      })
+    })
+    
+    return  filesURLS$
+  }
+
+  
 
 }
 

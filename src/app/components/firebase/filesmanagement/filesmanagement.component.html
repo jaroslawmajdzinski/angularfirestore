@@ -1,10 +1,18 @@
+<a #fileDownload>cos</a>
 <mat-card class="overflow-hidden">
-  <mat-card-header class="bg-primary-100"
-    ><h2 class="text-primary-600">Your files</h2></mat-card-header
+  <mat-card-header class="bg-primary-100"><h2 class="text-primary-600">Your files</h2></mat-card-header
   >
   <mat-card-content class="content">
+    <mat-drawer-container>
+   
+    <mat-drawer class="w-[250px]" position="end" #drawer>
+        <app-fileinfo (close)="drawer.close()" [fileMetadata]="fileMetadata"></app-fileinfo>
+    </mat-drawer>    
+    
+    <mat-drawer-content>    
+    
     <div class="grid grid-cols-7 gap-y-1 mt-1">
-      
+    <!--curr path-->  
     <div class="col-span-6  text-lg text-primary-700 flex bg-slate-100">
         
             <span class="inline-block pl-2 pt-[7px]"><mat-icon>folder_open</mat-icon></span>
@@ -24,13 +32,17 @@
         </div>
         
     </div>
+    <!--curr path end-->
+    
+    <!--Create directory-->
     <div class="bg-slate-100">
         <div class="flex justify-end">
-            <span (click)="createDirctory()" class="pr-4 p-2"><mat-icon class="text-primary-500 hover:text-primary-400 cursor-pointer">create_new_folder</mat-icon>
-        
+            <span (click)="createDirctory()" class="pr-4 p-2">
+                <mat-icon class="text-primary-500 hover:text-primary-400 cursor-pointer">create_new_folder</mat-icon>
             </span>
         </div>    
     </div> 
+    <!--header-->
       <div class="p-2 py-3 bg-primary-500">
         <input (click)="selectAllHandler($event)" type="checkbox" />
       </div>
@@ -40,7 +52,7 @@
           class="h-full flex justify-end items-center"
           *ngIf="filesList | selected"
         >
-          <button mat-flat-button><mat-icon>download</mat-icon>Upload</button>
+          <button (click)="downloadFiles()" mat-flat-button><mat-icon>download</mat-icon>Download</button>
 
           <button
             (click)="deleteHandler()"
@@ -52,6 +64,9 @@
           </button>
         </div>
       </div>
+
+      <!--Files list-->
+
       <ng-container *ngFor="let item of filesList; let idx = index">
         <div class="bg-primary-50 p-2">
           <input
@@ -61,7 +76,7 @@
             *ngIf="!item.isDirectory"
           />
         </div>
-
+        <!--directory-->
         <div
           class="col-span-5 bg-primary-50 py-2 cursor-pointer"
           (click)="openDirectory(idx)"
@@ -69,8 +84,9 @@
         >
           {{ item.fullPath }}<span>/</span>
         </div>
+        <!--file-->
         <ng-template #file>
-          <div class="col-span-5 bg-primary-50 py-2">{{ item.name }}</div>
+          <div (click)="showFileMetadata(idx)" class="col-span-5 bg-primary-50 py-2 cursor-pointer">{{ item.name }}</div>
         </ng-template>
 
         <div class="bg-primary-50">
@@ -86,6 +102,9 @@
           </div>
         </div>
       </ng-container>
+    
     </div>
-  </mat-card-content>
+</mat-drawer-content> 
+</mat-drawer-container>
+</mat-card-content>
 </mat-card>

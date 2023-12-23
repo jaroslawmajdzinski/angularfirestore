@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Subscription, catchError, concatMap, exhaustMap, filter, forkJoin, map, tap } from 'rxjs';
+import { EMPTY, Subscription, catchError, concat, concatMap, exhaustMap, filter, forkJoin, map, tap } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
 import { MessageDialogComponent } from '../../message-dialog/message-dialog.component';
 import { FormDialogComponent } from '../../form-dialog/form-dialog.component';
+import { MatDrawer } from '@angular/material/sidenav';
+import { IFileMetadata } from 'src/app/firebase/models/metadata.mode';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-filesmanagement',
@@ -12,12 +15,17 @@ import { FormDialogComponent } from '../../form-dialog/form-dialog.component';
 })
 export class FilesmanagementComponent implements OnInit{
 
+@ViewChild('fileDownload')anchor!: ElementRef<HTMLAnchorElement> 
+@ViewChild('drawer')drawer!: MatDrawer
+
 filesList: {name: string, fullPath: string, isDirectory: boolean, selected: boolean}[] = []  
 sub!: Subscription
 path: string[] = []
 currPath = "/"
 
-constructor(public _storageService: FileuploadService, private _dialog: MatDialog){}
+fileMetadata!: IFileMetadata
+
+constructor(public _storageService: FileuploadService, private _dialog: MatDialog, private _httpClient: HttpClient){}
 
  ngOnInit(): void {
    this.sub = this.getListHandler().subscribe()
@@ -100,6 +108,41 @@ createDirctory(){
       return EMPTY
     })  
   ).subscribe()
+}
+
+showFileMetadata(idx: number){
+  this._storageService.getFileMetadata(this.filesList[idx].fullPath).pipe(
+    tap((res)=>{
+      this.drawer.open()
+      this.fileMetadata = {...res}
+      console.log(res)
+    })
+  ).subscribe()
+}
+
+downloadFiles(){
+  //this._storageService.downloadFile('lala')
+  //this.filesList.filter(item=>item.selected).map(item=>this._storageService.downloadFile(item.fullPath))
+  forkJoin(this.filesList.filter(item=>item.selected).map(item=>this._storageService.downloadFile(item.fullPath).pipe(
+    concatMap(url=>{
+      return this._httpClient.get(url, {responseType: 'blob'})
+     }),
+    tap(blob=>{
+      const a = document.createElement('a')
+      const objectUrl = URL.createObjectURL(blob)
+      a.href = objectUrl
+      a.download = item.name
+      document.body.append(a)
+      a.click()
+      URL.revokeObjectURL(objectUrl)
+      document.body.removeChild(a)
+      item.selected = false
+      item = {...item}
+    })
+    ))
+  ).pipe(tap(_=>{
+    this.filesList = [...this.filesList]
+  })).subscribe()
 }
 
 }

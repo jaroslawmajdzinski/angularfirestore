@@ -1,0 +1,17 @@
+<div class="bg-primary-50 pr-1 h-full  text-primary-700"   *ngIf="fileMetadata">
+            
+    <div class=" pl-3 py-2 font-bold">File info</div>
+     
+    <div class="pl-4 pt-1 italic text-xs bg-primary-100" >file type:</div>
+    <div class="py-1 pl-3 break-all"> {{fileMetadata.contentType}}</div>    
+
+    <div class="pl-4 italic text-xs pt-1 bg-primary-100">size:</div>
+    <div class="py-1 pl-3 "> {{fileMetadata.size}} bytes</div> 
+
+    <div class="pl-4 italic text-xs pt-1 bg-primary-100 ">created</div>
+    <div class="py-1 pl-3 "> {{fileMetadata.timeCreated}}</div> 
+    
+    <div class="pl-4 italic text-xs pt-1 ">updated</div>
+    <div class="py-1 pl-3 "> {{fileMetadata.timeCreated}}</div> 
+    <div class="p-2 hover:text-slate-500" (click)="close.emit()"><mat-icon>arrow_back</mat-icon></div>
+</div>
