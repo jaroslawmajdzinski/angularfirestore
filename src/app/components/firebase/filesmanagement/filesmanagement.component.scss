@@ -10,3 +10,10 @@
 .button{
     @apply text-white ml-4 mr-2;
 }
+.progress{
+    background-color: var(--primary-100);
+}
+.mat-mdc-progress-bar {
+    --mdc-linear-progress-active-indicator-color: var(--primary-500);
+    --mdc-linear-progress-track-color: var(--primary-200);
+}

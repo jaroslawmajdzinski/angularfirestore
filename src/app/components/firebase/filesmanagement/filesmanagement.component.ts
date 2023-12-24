@@ -1,24 +1,31 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Subscription, catchError, concat, concatMap, exhaustMap, filter, forkJoin, map, tap } from 'rxjs';
+import { EMPTY, Observable, Subscription, catchError, concat, concatMap, delay, exhaustMap, filter, forkJoin, last, map, scan, tap } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
 import { MessageDialogComponent } from '../../message-dialog/message-dialog.component';
 import { FormDialogComponent } from '../../form-dialog/form-dialog.component';
 import { MatDrawer } from '@angular/material/sidenav';
 import { IFileMetadata } from 'src/app/firebase/models/metadata.mode';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
+
+interface IDownload {
+  content: Blob | null;
+  progress: number;
+  state: HttpEventType
+}
 
 @Component({
   selector: 'app-filesmanagement',
   templateUrl: './filesmanagement.component.html',
-  styleUrls: ['./filesmanagement.component.scss']
+  styleUrls: ['./filesmanagement.component.scss'],
+  //encapsulation: ViewEncapsulation.None
 })
 export class FilesmanagementComponent implements OnInit{
 
 @ViewChild('fileDownload')anchor!: ElementRef<HTMLAnchorElement> 
 @ViewChild('drawer')drawer!: MatDrawer
 
-filesList: {name: string, fullPath: string, isDirectory: boolean, selected: boolean}[] = []  
+filesList: {name: string, fullPath: string, isDirectory: boolean, selected: boolean, progress: number}[] = []  
 sub!: Subscription
 path: string[] = []
 currPath = "/"
@@ -33,12 +40,17 @@ constructor(public _storageService: FileuploadService, private _dialog: MatDialo
 
  getListHandler(directory = ""){
   return this._storageService.listAllFiles(directory).pipe(
-    tap(items=>this.filesList = [...items.map(item=>({...item, selected: false}))])
+    tap(items=>this.filesList = [...items.map(item=>({...item, selected: false, progress: 0}))])
    )
  }
 
  selectAllHandler($event: Event){
-  this.filesList.forEach(item=>item.selected =($event.target as HTMLInputElement).checked)
+  this.filesList.forEach((item, i)=>{
+    if(!this.filesList[i].isDirectory){
+    this.filesList[i].selected = ($event.target as HTMLInputElement).checked
+    this.filesList[i].progress = 0
+  }
+  })
   this.filesList = [...this.filesList]
 }
 
@@ -54,7 +66,6 @@ deleteOneHandler(idx: number){
       {label: "No", color: "warn", dismiss: true}
      ]}}
      ).afterClosed().pipe(
-      tap(e=>console.log(e)),
       filter(res=>(res!=='dismiss' && res!==undefined )),
       concatMap(_=>this._storageService.deleteFile(this.filesList[idx].fullPath)),
       concatMap(()=>this.getListHandler(this.path.join('/'))),
@@ -66,14 +77,21 @@ deleteOneHandler(idx: number){
 }
 
 deleteHandler(){
- forkJoin(this.filesList.filter(item=>item.selected && !item.isDirectory).map(item=>this._storageService.deleteFile(item.fullPath)))
-  .pipe(
-    concatMap(()=>this.getListHandler(this.path.join('/'))),
-    catchError(err=>{
-      console.error(err.message)
-      return EMPTY
-    })
-  )
+  this._dialog.open(MessageDialogComponent,
+    {data: {title: "Question", message: `Do you want to delet selected files?`, actionAreaConfig: [
+     {label: "Yes", color: "primary"},
+     {label: "No", color: "warn", dismiss: true}
+    ]}}
+    ).afterClosed().pipe(
+      filter(res=>(res!=='dismiss' && res!==undefined )),
+      concatMap(_=>forkJoin(this.filesList.filter(item=>item.selected && !item.isDirectory).map(item=>this._storageService.deleteFile(item.fullPath)))
+      .pipe(
+        concatMap(()=>this.getListHandler(this.path.join('/'))),
+        catchError(err=>{
+          console.error(err.message)
+          return EMPTY
+        }))
+      ))
  .subscribe()
 }
 
@@ -90,9 +108,7 @@ openDirectory(idx: number){
 }
 
 goToDirectory(idx: number){
-  
-  console.log(idx, this.path.slice(0,idx + 1))
-  this.path = this.path.slice(0, idx + 1)
+ this.path = this.path.slice(0, idx + 1)
   this.getListHandler(this.path.join('/')).subscribe()
 }
 
@@ -100,7 +116,6 @@ createDirctory(){
  
   this._dialog.open(FormDialogComponent).afterClosed().pipe(
     filter(result=>result),
-    tap((r)=>console.log(r)),
     concatMap(result=>this._storageService.createDirectory(this.path.join('/') + `/${result}`)),
     concatMap(_=>this.getListHandler(this.path.join('/'))),
     catchError(err=>{
@@ -115,34 +130,45 @@ showFileMetadata(idx: number){
     tap((res)=>{
       this.drawer.open()
       this.fileMetadata = {...res}
-      console.log(res)
-    })
+     })
   ).subscribe()
 }
 
 downloadFiles(){
-  //this._storageService.downloadFile('lala')
-  //this.filesList.filter(item=>item.selected).map(item=>this._storageService.downloadFile(item.fullPath))
   forkJoin(this.filesList.filter(item=>item.selected).map(item=>this._storageService.downloadFile(item.fullPath).pipe(
     concatMap(url=>{
-      return this._httpClient.get(url, {responseType: 'blob'})
+      return this._httpClient.get(url, {responseType: 'blob', reportProgress: true, observe: 'events'})
      }),
-    tap(blob=>{
-      const a = document.createElement('a')
+    tap(event=>{
+      if(event.type===HttpEventType.DownloadProgress && event.total && event.loaded){
+        item.progress = Math.ceil((event.loaded * 100) / (event.total))
+       }
+    if(event.type===HttpEventType.Response){
+        this.saveHandler(event.body as Blob, item.name)
+      }
+    })
+    )),
+    catchError(err=>{
+      console.error(err.message)
+      return EMPTY
+    })
+  ).pipe(
+    delay(300),
+    tap(_=>{
+    this.filesList = [...this.filesList.map(item=>({...item, selected: false, progress: 0}))]
+  })).subscribe()
+}
+
+
+saveHandler(blob: Blob, name: string){
+  const a = document.createElement('a')
       const objectUrl = URL.createObjectURL(blob)
       a.href = objectUrl
-      a.download = item.name
+      a.download = name
       document.body.append(a)
       a.click()
       URL.revokeObjectURL(objectUrl)
       document.body.removeChild(a)
-      item.selected = false
-      item = {...item}
-    })
-    ))
-  ).pipe(tap(_=>{
-    this.filesList = [...this.filesList]
-  })).subscribe()
 }
 
 }
