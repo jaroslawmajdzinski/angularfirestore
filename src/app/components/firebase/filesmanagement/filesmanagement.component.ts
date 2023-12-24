@@ -137,7 +137,12 @@ showFileMetadata(idx: number){
 downloadFiles(){
   forkJoin(this.filesList.filter(item=>item.selected).map(item=>this._storageService.downloadFile(item.fullPath).pipe(
     concatMap(url=>{
-      return this._httpClient.get(url, {responseType: 'blob', reportProgress: true, observe: 'events'})
+      return this._httpClient.get(url, {responseType: 'blob', reportProgress: true, observe: 'events'}).pipe(
+          catchError(err=>{
+          console.error(err.message)
+          return EMPTY
+    })
+      )
      }),
     tap(event=>{
       if(event.type===HttpEventType.DownloadProgress && event.total && event.loaded){
@@ -147,11 +152,7 @@ downloadFiles(){
         this.saveHandler(event.body as Blob, item.name)
       }
     })
-    )),
-    catchError(err=>{
-      console.error(err.message)
-      return EMPTY
-    })
+    ))
   ).pipe(
     delay(300),
     tap(_=>{
