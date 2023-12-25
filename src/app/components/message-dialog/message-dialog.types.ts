@@ -1,6 +1,6 @@
 export interface IActionAreaConfig {
     label: string;
-    color: "primary" | "secondary" | "accent" | "danger";
+    color: "primary" | "secondary" | "accent" | "warn";
     dismiss?: boolean
 }
 

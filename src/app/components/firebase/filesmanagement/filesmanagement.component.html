@@ -1,4 +1,4 @@
-<a #fileDownload>cos</a>
+
 <mat-card class="overflow-hidden">
   <mat-card-header class="bg-primary-100"
     ><h2 class="text-primary-600">Your files</h2></mat-card-header
@@ -118,7 +118,7 @@
             <div class="col-span-2 pt-4" [ngClass]="{
               'bg-primary-50': !item.selected,
               'bg-primary-100': item.selected
-            }"><mat-progress-bar class="my-progress-bar" [value]="item.progress" mode="determinate"  *ngIf="item.selected"></mat-progress-bar></div>
+            }"><mat-progress-bar class="my-progress-bar" [value]="item.progress" mode="determinate"  *ngIf="item.selected || item.loaded"></mat-progress-bar></div>
             <div
               [ngClass]="{
                 'bg-primary-50': !item.selected,

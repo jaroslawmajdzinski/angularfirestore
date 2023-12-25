@@ -2,17 +2,16 @@ import {
   Component,
   ElementRef,
   ViewChild,
-  ViewEncapsulation,
+  
 } from '@angular/core';
-import { UUID } from 'crypto';
-import { Observable, finalize, forkJoin, tap } from 'rxjs';
+
+import {  forkJoin, tap } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
-  //encapsulation: ViewEncapsulation.None
 })
 export class UploadComponent {
   fileList: {
@@ -28,7 +27,7 @@ export class UploadComponent {
   constructor(private _uploadService: FileuploadService) {}
 
   handleFileUpload() {
-    console.log(this.fileInput.nativeElement.files);
+    
     const files = this.fileInput.nativeElement.files || [];
 
     this.fileList = [
@@ -40,16 +39,7 @@ export class UploadComponent {
       })),
       ...this.fileList,
     ];
-    /*
-    if(files.length){
-      const sub = this._uploadService.uploadFileToStorage(files[0])
-      if(sub){
-        sub.pipe(tap(progres=>{
-          console.log('progres', progres)
-        })).subscribe()
-      }
-    }
-    */
+   
   }
 
   listAllFiles() {
