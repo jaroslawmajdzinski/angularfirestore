@@ -1,10 +1,7 @@
 
-<mat-card class="overflow-hidden">
-  <mat-card-header class="bg-primary-100"
-    ><h2 class="text-primary-600">Your files</h2></mat-card-header
-  >
-  <mat-card-content class="content">
-    <mat-drawer-container>
+
+   <mat-card-header class="header"> <h2 class="text-primary-600">Your files</h2></mat-card-header>
+      <mat-drawer-container>
       <mat-drawer class="w-[250px]" position="end" #drawer>
         <app-fileinfo
           (close)="drawer.close()"
@@ -81,7 +78,7 @@
 
           <ng-container *ngFor="let item of filesList; let idx = index">
             <div
-              class="p-2"
+              class="p-2 pl-3"
               [ngClass]="{
                 'bg-primary-50': !item.selected,
                 'bg-primary-100': item.selected
@@ -115,6 +112,7 @@
                 {{ item.name }}
               </div>
             </ng-template>
+
             <div class="col-span-2 pt-4" [ngClass]="{
               'bg-primary-50': !item.selected,
               'bg-primary-100': item.selected
@@ -140,5 +138,3 @@
         </div>
       </mat-drawer-content>
     </mat-drawer-container>
-  </mat-card-content>
-</mat-card>

@@ -8,18 +8,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import {
   EMPTY,
-  Observable,
   Subscription,
   catchError,
-  concat,
   concatMap,
   delay,
-  exhaustMap,
   filter,
   forkJoin,
-  last,
-  map,
-  scan,
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
@@ -30,10 +24,7 @@ import { IFileMetadata } from 'src/app/firebase/models/metadata.mode';
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpEvent,
   HttpEventType,
-  HttpRequest,
-  HttpResponse,
 } from '@angular/common/http';
 import { IDialogConfig } from '../../message-dialog/message-dialog.types';
 
@@ -71,22 +62,20 @@ export class FilesmanagementComponent implements OnInit {
   }
 
   getListHandler(directory = '') {
-    return this._storageService
-      .listAllFiles(directory)
-      .pipe(
-        tap(
-          (items) =>
-            (this.filesList = [
-              ...items.map((item) => ({
-                ...item,
-                selected: false,
-                progress: 0,
-                loaded: false,
-              })),
-            ])
-        ),
-        catchError(this.errorHandler)
-      );
+    return this._storageService.listAllFiles(directory).pipe(
+      tap(
+        (items) =>
+          (this.filesList = [
+            ...items.map((item) => ({
+              ...item,
+              selected: false,
+              progress: 0,
+              loaded: false,
+            })),
+          ])
+      ),
+      catchError(this.errorHandler)
+    );
   }
 
   selectAllHandler($event: Event) {
@@ -116,9 +105,12 @@ export class FilesmanagementComponent implements OnInit {
         { label: 'Yes', color: 'primary' },
         { label: 'No', color: 'warn', dismiss: true },
       ],
-    }).pipe(
+    })
+      .pipe(
         filter((res) => res !== 'dismiss' && res !== undefined),
-        concatMap(() =>this._storageService.deleteFile(this.filesList[idx].fullPath)),
+        concatMap(() =>
+          this._storageService.deleteFile(this.filesList[idx].fullPath)
+        ),
         concatMap(() => this.getListHandler(this.path.join('/'))),
         catchError(this.errorHandler)
       )
@@ -133,7 +125,8 @@ export class FilesmanagementComponent implements OnInit {
         { label: 'Yes', color: 'primary' },
         { label: 'No', color: 'warn', dismiss: true },
       ],
-    }).pipe(
+    })
+      .pipe(
         filter((res) => res !== 'dismiss' && res !== undefined),
         concatMap((_) =>
           forkJoin(
@@ -175,7 +168,7 @@ export class FilesmanagementComponent implements OnInit {
             this.path.join('/') + `/${result}`
           )
         ),
-        concatMap(_ => this.getListHandler(this.path.join('/'))),
+        concatMap((_) => this.getListHandler(this.path.join('/'))),
         catchError(this.errorHandler)
       )
       .subscribe();
@@ -206,9 +199,7 @@ export class FilesmanagementComponent implements OnInit {
                   reportProgress: true,
                   observe: 'events',
                 })
-                .pipe(
-                  catchError(this.errorHandler)
-                );
+                .pipe(catchError(this.errorHandler));
             }),
             tap((event) => {
               if (
@@ -237,7 +228,7 @@ export class FilesmanagementComponent implements OnInit {
       .subscribe();
   }
 
-  dialog(dialogData: IDialogConfig){
+  dialog(dialogData: IDialogConfig) {
     return this._dialog
       .open(MessageDialogComponent, {
         data: {
@@ -246,13 +237,13 @@ export class FilesmanagementComponent implements OnInit {
           actionAreaConfig: [...dialogData.actionAreaConfig],
         },
       })
-      .afterClosed()
-  }  
+      .afterClosed();
+  }
 
-  errorHandler(err: HttpErrorResponse){
-      console.error(err.message);
-      return EMPTY;
-  }  
+  errorHandler(err: HttpErrorResponse) {
+    console.error(err.message);
+    return EMPTY;
+  }
 
   saveHandler(blob: Blob, name: string) {
     const a = document.createElement('a');

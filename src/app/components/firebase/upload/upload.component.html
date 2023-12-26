@@ -1,47 +1,87 @@
-<mat-card>
-   
-    <div class="w-full  flex flex-col justify-center align-middle rounded-sm overflow-hidden">
-    
-    
-   
 
-  <div class="grid grid-cols-7 gap-y-1  text-black">
-    
-    <div class="col-span-5 bg-primary-100"></div>
-    <div class="col-span-2 p-2 bg-primary-100">
-       <div class="flex justify-end"> 
-        <button (click)="fileInput.click()" mat-flat-button>Chose file</button>
-    </div> 
-    </div>
+  <div
+    class="w-full flex flex-col justify-center align-middle rounded-sm overflow-hidden"
+  >
+    <div class="grid grid-cols-7 gap-y-[2px] text-black">
+      <div class="col-span-5 bg-primary-100"></div>
+      <div class="col-span-2 p-2 bg-primary-100">
+        <div class="flex justify-end">
+          <button (click)="fileInput.click()" mat-flat-button>
+            Chose file
+          </button>
+        </div>
+      </div>
 
-    <div class="p-4 bg-primary-500 "><input (click)="selectAllHandler($event)" type="checkbox" #selectAll/></div>
-    <div class="col-span-3 bg-primary-500"></div>
-    <div class="col-span-3 bg-primary-500 ">
-       <div class="h-full flex justify-end items-center" *ngIf="this.fileList | selected"> 
-        <button mat-flat-button  class="mr-4" (click)="uploadSelectedFiles()"><mat-icon>upload</mat-icon>Upload</button>
-        <button mat-flat-button color="accent" class="ml-6 mr-2" (click)="removeFilesHandler()"><mat-icon>delete</mat-icon>Remove from list</button>
-    </div> 
-    </div>
-    
-    <ng-container *ngFor="let item of fileList; let idx=index">
-    <div class="bg-primary-50 p-2 pl-4"><input type="checkbox" [checked]="item.selected" (click)="selectHandler($event, idx)" *ngIf="!(item.progress===100)"/></div>
-    <div class="col-span-3 p-2 bg-primary-50" >{{item.file.name }}</div>
-    <div class="col-span-2 pt-4 bg-primary-50"><mat-progress-bar class="my-progress-bar" [value]="item.progress" mode="determinate"></mat-progress-bar></div>    
-    <div (click)="uploadFile(idx)" class="text-end bg-primary-50">
-        
-        <mat-icon class="text-primary-400 hover:text-primary-500 icon-size" [ngClass]="{'hover:text-primary-200 animate-pulse': item.inprogress && (item.progress<100)}" *ngIf="!(item.progress===100)">play_arrow</mat-icon>
-    
-    </div>
-</ng-container>
-</div>
-</div>
+      <ng-template [ngIf]="fileList.length">
+        <div class="p-4 bg-primary-500">
+          <input
+            (click)="selectAllHandler($event)"
+            type="checkbox"
+            #selectAll
+          />
+        </div>
+        <div class="col-span-3 bg-primary-500"></div>
+        <div class="col-span-3 bg-primary-500">
+          <div
+            class="h-full flex justify-end items-center"
+            *ngIf="this.fileList | selected"
+          >
+            <button
+              mat-flat-button
+              class="mr-4"
+              (click)="uploadSelectedFiles()"
+            >
+              <mat-icon>upload</mat-icon>Upload
+            </button>
+            <button
+              mat-flat-button
+              color="accent"
+              class="ml-6 mr-2"
+              (click)="removeFilesHandler()"
+            >
+              <mat-icon>delete</mat-icon>Remove from list
+            </button>
+          </div>
+        </div>
+      </ng-template>
 
-</mat-card>
+      <ng-container *ngFor="let item of fileList; let idx = index">
+        <div class="bg-primary-50 pt-2 pl-4">
+          <input
+            type="checkbox"
+            [checked]="item.selected"
+            (click)="selectHandler($event, idx)"
+            *ngIf="!(item.progress === 100)"
+          />
+        </div>
+        <div class="col-span-3 pt-2 bg-primary-50">{{ item.file.name }}</div>
+        <div class="col-span-2 pt-3 bg-primary-50">
+          <mat-progress-bar
+            class="my-progress-bar"
+            [value]="item.progress"
+            mode="determinate"
+          ></mat-progress-bar>
+        </div>
+        <div (click)="uploadFile(idx)" class="text-end bg-primary-50">
+          <mat-icon
+            class="text-primary-400 hover:text-primary-500 icon-size"
+            [ngClass]="{
+              'hover:text-primary-200 animate-pulse':
+                item.inprogress && item.progress < 100
+            }"
+            *ngIf="!(item.progress === 100)"
+            >play_arrow</mat-icon
+          >
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
 <input
-    class="absolute z-30"
-    type="file"
-    (change)="handleFileUpload()"
-    class="invisible"
-    multiple
-    #fileInput
-  />
+  class="absolute z-30"
+  type="file"
+  (change)="handleFileUpload()"
+  class="hidden"
+  multiple
+  #fileInput
+/>

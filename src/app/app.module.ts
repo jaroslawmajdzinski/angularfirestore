@@ -29,7 +29,8 @@ import { ActionareaComponent } from './components/message-dialog/actionarea/acti
 import { ButtontestComponent } from './components/elements/style.directives/buttontest/buttontest.component';
 import { FormDialogComponent } from './components/form-dialog/form-dialog.component';
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
-import { PathComponent } from './components/firebase/filesmanagement/path/path.component'
+import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
+import { ManagementComponent } from './components/firebase/management/management.component'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -52,7 +53,8 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     ButtontestComponent,
     FormDialogComponent,
     FileinfoComponent,
-    PathComponent
+    PathComponent,
+    ManagementComponent
   ],
   imports: [
     BrowserModule,

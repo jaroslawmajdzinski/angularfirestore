@@ -1,0 +1,6 @@
+.content{
+    @apply p-0 m-0;
+    &:last-child{
+        @apply p-0;
+    }
+}
