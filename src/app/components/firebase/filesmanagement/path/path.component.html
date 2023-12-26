@@ -1,1 +1,22 @@
-<p>path works!</p>
+<ng-container *ngIf="managment.getPath() | async as path">
+
+            <span class="inline-block pl-2 pt-[7px]"><mat-icon>folder_open</mat-icon></span>
+
+            <div class="p-2">
+              <span
+                class="cursor-pointer"
+                [ngClass]="{ 'hover:text-primary-500 underline': path.length }"
+                (click)="managment.goToDirByIndex(-1)"
+                >Root
+            </span>
+
+              <span
+                class="cursor-pointer"
+                [ngClass]="{ 'hover:text-primary-500': !last }"
+                (click)="managment.goToDirByIndex(idx)"
+                *ngFor="let dir of path; let idx = index; let last = last">
+                /
+                <span [ngClass]="{ underline: !last }">{{ dir }}</span>
+            </span>
+            </div>
+</ng-container>

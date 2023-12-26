@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ManagementService } from '../../management/management.service';
 
 @Component({
   selector: 'app-path',
@@ -7,6 +8,8 @@ import { Component, Input } from '@angular/core';
 })
 export class PathComponent {
 
-@Input()path!: string[]
+
+ constructor(public managment: ManagementService){}  
+
 
 }

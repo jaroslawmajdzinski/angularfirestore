@@ -27,6 +27,7 @@ import {
   HttpEventType,
 } from '@angular/common/http';
 import { IDialogConfig } from '../../message-dialog/message-dialog.types';
+import { ManagementService } from '../management/management.service';
 
 @Component({
   selector: 'app-filesmanagement',
@@ -54,6 +55,7 @@ export class FilesmanagementComponent implements OnInit {
   constructor(
     public _storageService: FileuploadService,
     private _dialog: MatDialog,
+    private _managementServise: ManagementService,
     private _httpClient: HttpClient
   ) {}
 
@@ -61,21 +63,26 @@ export class FilesmanagementComponent implements OnInit {
     this.sub = this.getListHandler().subscribe();
   }
 
-  getListHandler(directory = '') {
-    return this._storageService.listAllFiles(directory).pipe(
-      tap(
-        (items) =>
-          (this.filesList = [
-            ...items.map((item) => ({
-              ...item,
-              selected: false,
-              progress: 0,
-              loaded: false,
-            })),
-          ])
-      ),
-      catchError(this.errorHandler)
-    );
+  getListHandler() {
+    return this._managementServise.getPath().pipe(
+      concatMap(path=>this._storageService.listAllFiles(path.join("/")).pipe(
+        tap(
+          (items) =>
+            (this.filesList = [
+              ...items.map((item) => ({
+                ...item,
+                selected: false,
+                progress: 0,
+                loaded: false,
+              })),
+            ])
+        ),
+       )),
+       catchError(this.errorHandler)
+       )
+    
+    
+    
   }
 
   selectAllHandler($event: Event) {
@@ -111,7 +118,7 @@ export class FilesmanagementComponent implements OnInit {
         concatMap(() =>
           this._storageService.deleteFile(this.filesList[idx].fullPath)
         ),
-        concatMap(() => this.getListHandler(this.path.join('/'))),
+        tap(() =>this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
       )
       .subscribe();
@@ -134,7 +141,7 @@ export class FilesmanagementComponent implements OnInit {
               .filter((item) => item.selected && !item.isDirectory)
               .map((item) => this._storageService.deleteFile(item.fullPath))
           ).pipe(
-            concatMap(() => this.getListHandler(this.path.join('/'))),
+            tap(() => this._managementServise.emitCurrPath()),
             catchError(this.errorHandler)
           )
         )
@@ -144,18 +151,13 @@ export class FilesmanagementComponent implements OnInit {
 
   openDirectory(idx: number) {
     if (this.filesList[idx].fullPath === '..') {
-      this.path.pop();
+      this._managementServise.goUpDir()
     } else {
-      this.path.push(this.filesList[idx].name);
+      this._managementServise.goDirDown(this.filesList[idx].name);
     }
-
-    this.getListHandler(this.path.join('/')).subscribe();
   }
 
-  goToDirectory(idx: number) {
-    this.path = this.path.slice(0, idx + 1);
-    this.getListHandler(this.path.join('/')).subscribe();
-  }
+  
 
   createDirctory() {
     this._dialog
@@ -163,12 +165,15 @@ export class FilesmanagementComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((result) => result),
-        concatMap((result) =>
-          this._storageService.createDirectory(
-            this.path.join('/') + `/${result}`
-          )
-        ),
-        concatMap((_) => this.getListHandler(this.path.join('/'))),
+        concatMap((result) =>this._managementServise.getPath()
+              .pipe(
+                concatMap(path=>this._storageService.createDirectory(
+                path.join("/") + `/${result}`
+              )
+            ),)
+        ),  
+        
+    tap(_ => this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
       )
       .subscribe();
