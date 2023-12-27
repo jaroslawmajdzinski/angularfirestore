@@ -4,7 +4,7 @@ import {
   AngularFireStorage,
   AngularFireStorageReference,
 } from '@angular/fire/compat/storage';
-import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject, concatMap, of, take } from 'rxjs';
+import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject, concatMap, of, take, takeLast, filter } from 'rxjs';
 import { User } from './models/user.model';
 import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';
 import { HttpClient } from '@angular/common/http';
@@ -54,9 +54,9 @@ export class FileuploadService {
   listAllFiles(directory = '') {
     
   return this._auth.getUserData$().pipe(
-    take(1),  
+    filter(user=>user!==null),
     concatMap(usr=>{
-        // @ts-ignore
+      // @ts-ignore
         const path = `${this._rootPath}/${usr['multiFactor']['user'].uid}/${directory}`;
         const listRef = ref(this._storage.storage, path);
         return  from(listAll(listRef)).pipe(
