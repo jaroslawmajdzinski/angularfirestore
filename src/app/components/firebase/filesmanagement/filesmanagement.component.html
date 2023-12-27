@@ -12,7 +12,7 @@
       <mat-drawer-content>
         <div class="grid grid-cols-7 gap-y-1 mt-1">
           <!--curr path-->
-          <div class="col-span-6 text-lg text-primary-700 flex bg-slate-100">
+          <div class="col-span-6 text-lg text-primary-700 bg-slate-100">
             <app-path/>
           </div>
           <!--curr path end-->
@@ -30,7 +30,7 @@
           </div>
           <!--header-->
           <div class="p-2 py-3 bg-primary-500">
-            <input (click)="selectAllHandler($event)" type="checkbox" />
+            <input (click)="selectAllHandler($event)" type="checkbox" #selectAll/>
           </div>
           <div class="col-span-4 bg-primary-500 text-white py-3">Name</div>
           <div class="col-span-2 bg-primary-500">

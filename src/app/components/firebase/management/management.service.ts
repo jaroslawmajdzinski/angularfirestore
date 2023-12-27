@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, map } from 'rxjs';
+import { TFileList } from './filesmanagement.types';
 
 @Injectable({
   providedIn: 'root'
@@ -8,35 +9,54 @@ export class ManagementService {
 
   private _path: string[] = []
 
-  path$ = new BehaviorSubject<string[]>(this._path)
+  private _newFile$ = new Subject<TFileList>()
+
+  private _path$ = new BehaviorSubject<string[]>(this._path)
 
   constructor() { }
 
 
+  getNewFile(){
+    return this._newFile$
+   }
+
+  newFile(newFile: TFileList){
+    this._newFile$.next(newFile)
+  }
+
   getPath(){
-    return this.path$
+    return this._path$.pipe(map(path=>{
+        return   path.join('/')
+      }))
+  }
+
+  getPathArray(){
+    return this._path$
   }
 
   goDirDown(dirName: string){
     this._path.push(dirName)
-    this.path$.next(this._path)
-  }
+    this._path$.next(this._path)
+   }
 
   goToDirByIndex(idx: number){
     //root is -1
     this._path = this._path.slice(0, idx + 1)
-    this.path$.next(this._path)
-  }
+    this._path$.next(this._path)
+   }
+
 
   goUpDir(){
     this._path.pop()
-    this.path$.next(this._path)
+    this._path$.next(this._path)
   }
 
 
 
   emitCurrPath(){
-    this.path$.next(this._path)
+    this._path$.next(this._path)
   }
+
+
 
 }

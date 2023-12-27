@@ -30,7 +30,8 @@ import { ButtontestComponent } from './components/elements/style.directives/butt
 import { FormDialogComponent } from './components/form-dialog/form-dialog.component';
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
-import { ManagementComponent } from './components/firebase/management/management.component'
+import { ManagementComponent } from './components/firebase/management/management.component';
+import { UploadanimComponent } from './components/firebase/uploadanim/uploadanim.component'
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -54,10 +55,12 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FormDialogComponent,
     FileinfoComponent,
     PathComponent,
-    ManagementComponent
+    ManagementComponent,
+    UploadanimComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,

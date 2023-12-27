@@ -1,47 +1,34 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-
-import {
-  EMPTY,
-  catchError,
-  concatMap,
-  finalize,
-  forkJoin,
-  last,
-  map,
-  scan,
-  take,
-  tap,
-} from 'rxjs';
+import { EMPTY, catchError, concatMap, forkJoin, scan, take, tap } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
-import { TUploadFilesList } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
-import { animate, query, stagger, state, style, transition, trigger } from '@angular/animations';
+import { TUploadFilesList } from '../management/filesmanagement.types';
+import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 
 @Component({
-  selector: 'app-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
-  animations: [
+  selector: 'app-uploadanim',
+  templateUrl: './uploadanim.component.html',
+  styleUrls: ['./uploadanim.component.scss'],
+  animations:[
     trigger('newElement', [
       
-     transition("*<=>*", [
-     query(":enter",
-       [
-        style({opacity: "0", transform: "scale(0.1)"}),
-        stagger('60ms', animate('200ms', style({opacity: 1, transform: "scale(1)"})))
-      ], {optional: true}
-     ),
-     query(":leave",
-       [
-        animate('200ms', style({opacity: 0, transform: "scale(0.1)"}))
-      ], {optional: true}
-     )
-    ])
-    ]),
-  ],
+      transition("*<=>*", [
+      query(":enter",
+        [
+         style({opacity: "0", transform: "scale(0.1)"}),
+         stagger('60ms', animate('300ms', style({opacity: 1, transform: "scale(1)"})))
+       ], {optional: true}
+      ),
+      query(":leave",
+        [
+         animate('300ms', style({opacity: 0, transform: "scale(0.1)"}))
+       ], {optional: true}
+      )
+     ])
+     ]),
+  ]
 })
-
-export class UploadComponent {
+export class UploadanimComponent {
   state: string = "showUp";
   fileList: TUploadFilesList[] = [];
   filesInProgress: TUploadFilesList[] = [];
@@ -198,4 +185,5 @@ export class UploadComponent {
     });
     this.fileList = [...this.fileList];
   }
+
 }

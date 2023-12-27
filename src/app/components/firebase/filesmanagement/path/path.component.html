@@ -1,5 +1,5 @@
-<ng-container *ngIf="managment.getPath() | async as path">
-
+<ng-container *ngIf="managment.getPathArray() | async as path">
+    <div class="flex items-center">
             <span class="inline-block pl-2 pt-[7px]"><mat-icon>folder_open</mat-icon></span>
 
             <div class="p-2">
@@ -19,4 +19,5 @@
                 <span [ngClass]="{ underline: !last }">{{ dir }}</span>
             </span>
             </div>
-</ng-container>
+        </div>
+        </ng-container>

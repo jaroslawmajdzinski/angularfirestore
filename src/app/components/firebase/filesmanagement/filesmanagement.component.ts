@@ -14,6 +14,7 @@ import {
   delay,
   filter,
   forkJoin,
+  take,
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
@@ -28,6 +29,7 @@ import {
 } from '@angular/common/http';
 import { IDialogConfig } from '../../message-dialog/message-dialog.types';
 import { ManagementService } from '../management/management.service';
+import { TFileList } from '../management/filesmanagement.types';
 
 @Component({
   selector: 'app-filesmanagement',
@@ -36,20 +38,13 @@ import { ManagementService } from '../management/management.service';
 })
 export class FilesmanagementComponent implements OnInit {
   @ViewChild('fileDownload') anchor!: ElementRef<HTMLAnchorElement>;
+  @ViewChild('selectAll')selectAll!: ElementRef<HTMLInputElement>;
   @ViewChild('drawer') drawer!: MatDrawer;
 
-  filesList: {
-    name: string;
-    fullPath: string;
-    isDirectory: boolean;
-    selected: boolean;
-    progress: number;
-    loaded: boolean;
-  }[] = [];
+  filesList: TFileList[] = [];
   sub!: Subscription;
   path: string[] = [];
-  currPath = '/';
-
+ 
   fileMetadata!: IFileMetadata;
 
   constructor(
@@ -60,12 +55,23 @@ export class FilesmanagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.sub = this.getListHandler().subscribe();
+    this.getListHandler().subscribe();
+    //this.sub.add(sub)
+    
+    this._managementServise.getNewFile().pipe(
+      tap(newFile=>{
+       
+        this.filesList.unshift(newFile)
+        this.filesList = [...this.filesList]
+      
+      })
+    ).subscribe()
+    //this.sub.add(sub)  
   }
 
   getListHandler() {
     return this._managementServise.getPath().pipe(
-      concatMap(path=>this._storageService.listAllFiles(path.join("/")).pipe(
+      concatMap(path=>this._storageService.listAllFiles(path).pipe(
         tap(
           (items) =>
             (this.filesList = [
@@ -144,8 +150,9 @@ export class FilesmanagementComponent implements OnInit {
             tap(() => this._managementServise.emitCurrPath()),
             catchError(this.errorHandler)
           )
+        ),
+            tap(()=>this.selectAll.nativeElement.checked = false)
         )
-      )
       .subscribe();
   }
 
@@ -167,8 +174,9 @@ export class FilesmanagementComponent implements OnInit {
         filter((result) => result),
         concatMap((result) =>this._managementServise.getPath()
               .pipe(
+                take(1),
                 concatMap(path=>this._storageService.createDirectory(
-                path.join("/") + `/${result}`
+                path + `/${result}`
               )
             ),)
         ),  
@@ -224,7 +232,8 @@ export class FilesmanagementComponent implements OnInit {
     )
       .pipe(
         delay(300),
-        tap((_) => {
+        tap(_ => {
+          this.selectAll.nativeElement.checked = false
           this.filesList = [
             ...this.filesList.map((item) => ({ ...item, selected: false })),
           ];

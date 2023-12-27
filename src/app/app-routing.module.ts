@@ -4,12 +4,13 @@ import { LoginReactiveComponent } from './components/login-reactive/login-reacti
 import { UploadComponent } from './components/firebase/upload/upload.component';
 import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
+import { UploadanimComponent } from './components/firebase/uploadanim/uploadanim.component';
 
 const routes: Routes = [
   {path: "", redirectTo: "/login", pathMatch: "full"},
   {path: "login", component: LoginReactiveComponent},
   {path: "register", component: LoginReactiveComponent},
-  {path: "fileupload", component: UploadComponent},
+  {path: "fileupload", component: UploadanimComponent},
   {path: "files", component: ManagementComponent}
 ];
 
