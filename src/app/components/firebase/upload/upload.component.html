@@ -1,119 +1,76 @@
-
-  <div
-    class="w-full flex flex-col justify-center align-middle rounded-sm overflow-hidden mb-1"
+<div class="flex flex-col rounded-sm rounded-t overflow-hidden">
+  <div class="flex justify-end p-2 mb-1 bg-primary-100">
+        <button (click)="fileInput.click()" mat-flat-button>
+          Chose file
+        </button>
+      </div>
     
-    >
-    <div class="grid grid-cols-7 gap-y-[2px] text-black">
-      <div class="col-span-5 bg-primary-100"></div>
-      <div class="col-span-2 p-2 bg-primary-100">
-        <div class="flex justify-end">
-          <button (click)="fileInput.click()" mat-flat-button>
-            Chose file
+<table class="table-fixed w-full border-separate border-spacing-y-1">
+    <thead class="bg-primary-500 text-white h-[45px]" *ngIf="fileList.length || filesInProgress.length">
+        <th class="p-2 w-[40px]">
+            <input (click)="selectAllHandler($event)" type="checkbox" #selectAll/>
+        </th>
+        <th class="text-left">Name</th>
+        <th>
+           <div class="flex justify-end" *ngIf="fileList | selected"> 
+            <button
+            mat-flat-button
+            class="mr-2"
+            (click)="uploadSelectedFiles()"
+          >
+            <mat-icon>upload</mat-icon>Upload
+          </button>
+          <button
+            mat-flat-button
+            color="accent"
+            class="ml-2 mr-2"
+            (click)="removeFilesHandler()"
+          >
+            <mat-icon>delete</mat-icon>Remove
           </button>
         </div>
-      </div>
+        </th>
+    </thead>
 
-      <ng-template [ngIf]="fileList.length || filesInProgress.length">
-        <div class="p-4 bg-primary-500">
-          <input
-            (click)="selectAllHandler($event)"
-            type="checkbox"
-            #selectAll
-          />
-        </div>
-        <div class="col-span-3 bg-primary-500"></div>
-        <div class="col-span-3 bg-primary-500">
-          <div
-            class="h-full flex justify-end items-center"
-            *ngIf="this.fileList | selected"
-          >
-            <button
-              mat-flat-button
-              class="mr-4"
-              (click)="uploadSelectedFiles()"
-            >
-              <mat-icon>upload</mat-icon>Upload
-            </button>
-            <button
-              mat-flat-button
-              color="accent"
-              class="ml-6 mr-2"
-              (click)="removeFilesHandler()"
-            >
-              <mat-icon>delete</mat-icon>Remove from list
-            </button>
-          </div>
-        </div>
-      </ng-template>
+    <tbody [@newElement]="fileList.length">
+       
+        <tr class="bg-primary-50" *ngFor="let item of fileList;let idx = index">
+            <td class="p-2 pl-3 "><input type="checkbox" (click)="selectHandler($event, idx)"  [checked]="item.selected"/></td>
+            <td>{{item.file.name}}</td>
+            <td></td>
+        </tr>
+    
+        <tr class="bg-primary-200 text-white" *ngIf="filesInProgress.length">
+          <td></td><td colspan="2">Inprogress</td>
+        </tr>
 
-      <ng-container *ngFor="let item of fileList; let idx = index">
-      <ng-container *ngIf="item.progress!==100">
-        
-        <div class="bg-primary-50 p-1 pl-4">
-          <input
-            type="checkbox"
-            [checked]="item.selected"
-            (click)="selectHandler($event, idx)"
-            *ngIf="!(item.progress === 100 && item.inprogress)"
-          />
-        </div>
-        <div class="col-span-3 p-1 bg-primary-50" >{{ item.file.name }}</div>
-        <div class="col-span-2 pt-3 bg-primary-50">
-          <mat-progress-bar
-            class="my-progress-bar"
-            [value]="item.progress"
-            mode="determinate"
-          ></mat-progress-bar>
-        </div>
-        <div (click)="uploadFile(idx)" class="text-end bg-primary-50">
-          <mat-icon
-            class="text-primary-400 hover:text-primary-500 icon-size"
-            [ngClass]="{
-              'hover:text-primary-200 animate-pulse':
-                item.inprogress && item.progress < 100
-            }"
-            *ngIf="!(item.progress === 100)"
-            >play_arrow</mat-icon
-          >
-        </div>
-        </ng-container>
-      </ng-container>
-
-      <ng-container *ngFor="let item of filesInProgress; let idx = index">
-        <ng-container *ngIf="item.progress!==100">
-          <div class="bg-primary-100 p-1 pl-4">
-            
-          </div>
-          <div class="col-span-3 p-1 bg-primary-100">{{ item.file.name }}</div>
-          
-          <div class="col-span-2 pt-3 bg-primary-100">
-            <mat-progress-bar
-              class="my-progress-bar"
-              [value]="item.progress"
-              mode="determinate"
-              *ngIf="item.progress>0; else waiting"             
-              ></mat-progress-bar>
-          
-              <ng-template #waiting>
+    <ng-container *ngFor="let item of filesInProgress; let idx = index">  
+        <tr class="bg-primary-100" *ngIf="item.progress!==100">
+            <td class="p-2 pl-3  border"></td>
+            <td>{{item.file.name}}</td>
+            <td class="px-3">
+                
                 <mat-progress-bar
-              class="my-progress-bar"
-              [value]="item.progress"
-              mode="indeterminate"
-             ></mat-progress-bar>
-              </ng-template>
-          
-            </div>
-          
-          <div  class="text-end bg-primary-100">
-            
-          </div>
-          </ng-container>
+                class="my-progress-bar"
+                [value]="item.progress"
+                mode="determinate"
+                *ngIf="item.progress>0; else wait"
+                ></mat-progress-bar>
+             
+                <ng-template #wait>
+                <mat-progress-bar
+                class="my-progress-bar"
+                [value]="item.progress"
+                mode="indeterminate"></mat-progress-bar>
+               </ng-template>
+             
+              </td>
+          </tr>
         </ng-container>
+    </tbody>
 
-
-    </div>
-  </div>
-
+</table>
+</div>
 <input
   class="absolute z-30"
   type="file"

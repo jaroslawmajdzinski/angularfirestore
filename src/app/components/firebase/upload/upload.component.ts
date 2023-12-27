@@ -72,48 +72,7 @@ export class UploadComponent {
     this._uploadService.listAllFiles().subscribe();
   }
 
-  uploadFile(idx: number) {
-    if (this.fileList[idx].inprogress === true) return;
-    
-    this.fileList[idx].inprogress = true;
-    this._mangement
-      .getPath()
-      .pipe(
-        take(1),
-        concatMap(
-          (path) =>
-            this._uploadService
-              .uploadFileToStorage(this.fileList[idx].file, path)
-              ?.pipe(
-                scan((progress: number | string, curr: number | string) => {
-                  if (typeof curr === 'number') {
-                    this.fileList[idx].progress = curr;
-                  } else {
-                    this._mangement.newFile({
-                      name: this.fileList[idx].file.name,
-                      progress: 0,
-                      selected: false,
-                      isDirectory: false,
-                      loaded: false,
-                      fullPath: curr,
-                    });
-
-                    this.fileList.splice(idx, 1);
-                    
-                  }
-                  return curr;
-                })
-              ) || EMPTY
-        )
-      )
-      .pipe(
-        catchError((err) => {
-          console.log(err);
-          return EMPTY;
-        })
-      )
-      .subscribe();
-  }
+  
 
   uploadSelectedFiles() {
     if (this.filesInProgress.length) {
@@ -126,6 +85,7 @@ export class UploadComponent {
     }
 
     this.selectAll.nativeElement.checked = false;
+    
     this.filesInProgress = [
       ...this.fileList.filter((item) => item.inprogress || item.selected),
     ];
@@ -171,7 +131,7 @@ export class UploadComponent {
     )
       .pipe(
         tap((_) => {
-          this.selectAll.nativeElement.checked = false;
+         
           this.filesInProgress = [
             ...this.filesInProgress.filter((item) => item.progress !== 100),
           ];
