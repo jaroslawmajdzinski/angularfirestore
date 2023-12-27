@@ -21,7 +21,8 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
       ),
       query(":leave",
         [
-         animate('300ms', style({opacity: 0, transform: "scale(0.1)"}))
+          style({opacity: "1", transform: "scale(1)"}),
+          stagger('60ms', animate('300ms', style({opacity: 0, transform: "scale(0.1)"})))
        ], {optional: true}
       )
      ])
@@ -29,7 +30,8 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
   ]
 })
 export class UploadanimComponent {
-  state: string = "showUp";
+  blockAnimation = false
+  
   fileList: TUploadFilesList[] = [];
   filesInProgress: TUploadFilesList[] = [];
 
@@ -111,7 +113,7 @@ export class UploadanimComponent {
         });
       return;
     }
-
+    this.blockAnimation = true
     this.selectAll.nativeElement.checked = false;
     this.filesInProgress = [
       ...this.fileList.filter((item) => item.inprogress || item.selected),
@@ -119,7 +121,7 @@ export class UploadanimComponent {
     this.fileList = [
       ...this.fileList.filter((item) => !(item.inprogress || item.selected)),
     ];
-
+    this.blockAnimation = false
     forkJoin<any>(
       this.filesInProgress
         .map((item, idx) => ({ ...item, idx: idx }))

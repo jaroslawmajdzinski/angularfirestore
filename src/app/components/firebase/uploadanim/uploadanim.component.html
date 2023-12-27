@@ -5,21 +5,50 @@
         </button>
       </div>
     
-<table class="w-full border-separate border-spacing-y-1">
-    <thead class="bg-primary-500 text-white">
+<table class="table-fixed w-full border-separate border-spacing-y-1">
+    <thead class="bg-primary-500 text-white h-[45px]">
         <th class="p-2 w-[40px]">
-            <input (click)="selectAll($event)" type="checkbox" #selectAll/>
+            <input (click)="selectAllHandler($event)" type="checkbox" #selectAll/>
         </th>
-        <th>Name</th>
-        <th></th>
+        <th class="text-left">Name</th>
+        <th>
+           <div class="flex justify-end" *ngIf="fileList | selected"> 
+            <button
+            mat-flat-button
+            class="mr-2"
+            (click)="uploadSelectedFiles()"
+          >
+            <mat-icon>upload</mat-icon>Upload
+          </button>
+          <button
+            mat-flat-button
+            color="accent"
+            class="ml-2 mr-2"
+            (click)="removeFilesHandler()"
+          >
+            <mat-icon>delete</mat-icon>Remove
+          </button>
+        </div>
+        </th>
     </thead>
 
-    <tbody [@newElement]="fileList.length">
+    <tbody [@newElement]="fileList.length" [@.disabled]="blockAnimation">
         <tr class="bg-primary-50" *ngFor="let item of fileList">
+            <td class="p-2 pl-3  border"><input type="checkbox"  [checked]="item.selected"/></td>
+            <td class="border">{{item.file.name}}</td>
+            <td class="border px-3"></td>
+        </tr>
+        
+        <tr class="bg-primary-50" *ngFor="let item of filesInProgress">
             <td class="p-2 pl-3  border"><input type="checkbox" [checked]="item.selected"/></td>
             <td class="border">{{item.file.name}}</td>
-            <td class="border"></td>
+            <td class="border px-3"><mat-progress-bar
+                class="my-progress-bar"
+                [value]="item.progress"
+                mode="determinate"
+              ></mat-progress-bar></td>
         </tr>
+    
     </tbody>
 
 </table>
