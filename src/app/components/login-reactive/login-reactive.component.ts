@@ -98,7 +98,7 @@ export class LoginReactiveComponent implements OnInit {
             actionAreaConfig: [{label: "Ok", color: "primary", dismiss: true }]
           },
         });
-        console.log(res);
+        //console.log(res);
       })
       .catch((error) => {
         //console.log(error.message);

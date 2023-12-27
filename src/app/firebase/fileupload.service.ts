@@ -4,7 +4,7 @@ import {
   AngularFireStorage,
   AngularFireStorageReference,
 } from '@angular/fire/compat/storage';
-import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject, concatMap } from 'rxjs';
+import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject, concatMap, of, take } from 'rxjs';
 import { User } from './models/user.model';
 import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';
 import { HttpClient } from '@angular/common/http';
@@ -19,8 +19,7 @@ export class FileuploadService {
 
   constructor(
     private _auth: AuthService,
-    private _storage: AngularFireStorage,
-    private _httpClient: HttpClient
+    private _storage: AngularFireStorage
     ) {
     this._auth
       .getUserData$()
@@ -53,39 +52,45 @@ export class FileuploadService {
   }
 
   listAllFiles(directory = '') {
-    // @ts-ignore
-    const path = `${this._rootPath}/${this._user['multiFactor']['user'].uid}/${directory}`;
-    const listRef = ref(this._storage.storage, path);
-    return from(listAll(listRef)).pipe(
-      map((res) => {
-        //console.log('prefixes', res.prefixes, 'items', res.items)
-        const folders = res.prefixes.map((item) => ({
-          name: item.name,
-          fullPath: item.name,
-          isDirectory: true,
-        }));
-        //prepare path if has parent
-        let lastDir = [];
-        if (directory) {
-          let tmp = directory.split('/');
-          tmp.pop();
-          lastDir.push({
-            name: tmp.join('/').substring(0),
-            fullPath: '..',
-            isDirectory: true,
-          });
-        }
-
-        const files = res.items
-          .filter((item) => item.name !== '.dir')
-          .map((itemRef) => ({
-            name: itemRef.name,
-            fullPath: itemRef.fullPath,
-            isDirectory: false,
-          }));
-        return [...lastDir, ...folders, ...files];
+    
+  return this._auth.getUserData$().pipe(
+    take(1),  
+    concatMap(usr=>{
+        // @ts-ignore
+        const path = `${this._rootPath}/${usr['multiFactor']['user'].uid}/${directory}`;
+        const listRef = ref(this._storage.storage, path);
+        return  from(listAll(listRef)).pipe(
+          map((res) => {
+            //console.log('prefixes', res.prefixes, 'items', res.items)
+            const folders = res.prefixes.map((item) => ({
+              name: item.name,
+              fullPath: item.name,
+              isDirectory: true,
+            }));
+            //prepare path if has parent
+            let lastDir = [];
+            if (directory) {
+              let tmp = directory.split('/');
+              tmp.pop();
+              lastDir.push({
+                name: tmp.join('/').substring(0),
+                fullPath: '..',
+                isDirectory: true,
+              });
+            }
+    
+            const files = res.items
+              .filter((item) => item.name !== '.dir')
+              .map((itemRef) => ({
+                name: itemRef.name,
+                fullPath: itemRef.fullPath,
+                isDirectory: false,
+              }));
+            return [...lastDir, ...folders, ...files];
+          })
+        );
       })
-    );
+    )
   }
 
   deleteFile(fullPath: string) {

@@ -86,10 +86,7 @@ export class FilesmanagementComponent implements OnInit {
        )),
        catchError(this.errorHandler)
        )
-    
-    
-    
-  }
+    }
 
   selectAllHandler($event: Event) {
     this.filesList.forEach((item, i) => {
