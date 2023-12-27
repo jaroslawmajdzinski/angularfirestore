@@ -21,7 +21,7 @@ export class AuthService {
           //console.log('user', user)
           localStorage.setItem('userData', JSON.stringify(user))
           this._user$.next(user)
-          this._router.navigate(['/fileupload'])
+          this._router.navigate(['/files'])
         } else {
           localStorage.removeItem('userData')
           this._user$.next(null)

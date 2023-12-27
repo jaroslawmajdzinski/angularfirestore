@@ -31,7 +31,7 @@ import { FormDialogComponent } from './components/form-dialog/form-dialog.compon
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
-import { UploadanimComponent } from './components/firebase/uploadanim/uploadanim.component'
+
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
   return () => themeService.loadConfig()
@@ -55,8 +55,7 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FormDialogComponent,
     FileinfoComponent,
     PathComponent,
-    ManagementComponent,
-    UploadanimComponent
+    ManagementComponent
   ],
   imports: [
     BrowserModule,
