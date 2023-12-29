@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, map } from 'rxjs';
 import { TFileList } from './filesmanagement.types';
+import { FileuploadService } from 'src/app/firebase/fileupload.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,12 +9,10 @@ import { TFileList } from './filesmanagement.types';
 export class ManagementService {
 
   private _path: string[] = []
-
   private _newFile$ = new Subject<TFileList>()
-
   private _path$ = new BehaviorSubject<string[]>(this._path)
 
-  constructor() { }
+  constructor(private _uploadService: FileuploadService) { }
 
 
   getNewFile(){
@@ -31,7 +30,7 @@ export class ManagementService {
   }
 
   getPathArray(){
-    return this._path$
+    return this._path$.asObservable()
   }
 
   goDirDown(dirName: string){

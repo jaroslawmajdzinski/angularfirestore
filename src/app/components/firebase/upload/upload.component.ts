@@ -1,19 +1,16 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 import {
   EMPTY,
   catchError,
   concatMap,
-  finalize,
   forkJoin,
-  last,
-  map,
   scan,
   take,
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
-import { TUploadFilesList } from '../management/filesmanagement.types';
+import {  TUploadFilesList } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
 import { animate, query, stagger, state, style, transition, trigger } from '@angular/animations';
 
@@ -42,12 +39,14 @@ import { animate, query, stagger, state, style, transition, trigger } from '@ang
 })
 
 export class UploadComponent {
-  state: string = "showUp";
+  
   fileList: TUploadFilesList[] = [];
   filesInProgress: TUploadFilesList[] = [];
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('selectAll') selectAll!: ElementRef<HTMLInputElement>;
+
+  selected = 0
 
   constructor(
     private _uploadService: FileuploadService,
@@ -68,6 +67,54 @@ export class UploadComponent {
     ];
   }
 
+  //select files on the list
+  removeFilesHandler() {
+    this.fileList = [...this.fileList.filter((item) =>!item.selected)];
+    this.selectAll.nativeElement.checked = false;
+    this.selected = 0  
+  }
+
+  selectHandler(event: Event, idx: number) {
+    const selected = (event.target as HTMLInputElement).checked;
+    this.removeAdd(this.fileList[idx].selected, selected)
+    this.fileList[idx].selected = selected
+    
+  }
+
+  selectAllHandler(event: Event) {
+    const selected = (event.target as HTMLInputElement).checked;
+    this.fileList.filter(item=>!item.inprogress).forEach((item) => {
+      this.removeAdd(item.selected, selected)  
+      item.selected = selected
+  });
+   
+  }
+
+  //move selected files and in queue to upload
+  moveToUpload(){
+    this.selectAll.nativeElement.checked = false;
+    
+    this.filesInProgress = [...this.fileList.filter((item) =>item.inprogress || item.selected)];
+    this.fileList = [
+      ...this.fileList.filter((item) => !(item.inprogress || item.selected)),
+    ];
+    this.selected = 0
+  }
+
+  //move to queue if work is in progress
+  moveInQueue(){
+    if (this.filesInProgress.length) {
+      this.fileList
+        .filter((item) => item.selected)
+        .forEach((item) => {
+          item.inprogress = true;
+        });
+        this.selected = 0
+        return true;
+    }
+    return false
+  }
+
   listAllFiles() {
     this._uploadService.listAllFiles().subscribe();
   }
@@ -75,25 +122,17 @@ export class UploadComponent {
   
 
   uploadSelectedFiles() {
-    if (this.filesInProgress.length) {
-      this.fileList
-        .filter((item) => item.selected)
-        .forEach((item) => {
-          item.inprogress = true;
-        });
-      return;
-    }
-
-    this.selectAll.nativeElement.checked = false;
     
-    this.filesInProgress = [
-      ...this.fileList.filter((item) => item.inprogress || item.selected),
-    ];
-    this.fileList = [
-      ...this.fileList.filter((item) => !(item.inprogress || item.selected)),
-    ];
+    if(this.moveInQueue()) return  
 
-    forkJoin<any>(
+    this.moveToUpload()
+
+    const inprogressList = this.filesInProgress
+            .map((item, idx) => ({ ...item, idx: idx }))
+            .filter((item) => item.selected && !(item.progress === 100))
+            .map(item=>this.filesInProgress[item.idx].inprogress = true)
+    
+    forkJoin(
       this.filesInProgress
         .map((item, idx) => ({ ...item, idx: idx }))
         .filter((item) => item.selected && !(item.progress === 100))
@@ -109,22 +148,29 @@ export class UploadComponent {
                     path
                   )
                   ?.pipe(
-                    scan((progress, curr: number | string) => {
+                    scan((progress, curr: number | {uploadPath: string, url: string} | undefined) => {
                       if (typeof curr === 'number') {
                         this.filesInProgress[item.idx].progress = curr;
-                      } else {
-                        this._mangement.newFile({
-                          name: this.filesInProgress[item.idx].file.name,
-                          progress: 0,
-                          selected: false,
-                          isDirectory: false,
-                          loaded: false,
-                          fullPath: curr,
-                        });
-                      }
+                      } 
                       return curr;
+                    }),
+                    tap(url=>{
+                      if(typeof url !=='number')
+                      this._mangement.newFile({
+                        name: this.filesInProgress[item.idx].file.name,
+                        progress: 0,
+                        selected: false,
+                        isDirectory: false,
+                        loaded: false,
+                        fullPath: url?.url || "",
+                        uploadPath: url?.uploadPath || ""
+                      });
+                    }),
+                    catchError(err=>{
+                      console.error(err.message)
+                      return EMPTY
                     })
-                  ) || EMPTY
+                    ) || EMPTY
             )
           );
         })
@@ -141,21 +187,18 @@ export class UploadComponent {
       .subscribe();
   }
 
-  removeFilesHandler() {
-    this.fileList = [...this.fileList.filter((item) => !item.selected)];
-    this.selectAll.nativeElement.checked = false;
+  
+  removeAdd(item: boolean, checkbox: boolean){
+    if(item===checkbox) return 
+    if(item<checkbox) {
+      this.selected++
+      return 
+    }
+    this.selected--
+  } 
+
+  trackByFn(index: number, item: TUploadFilesList){
+    return item.file.name
   }
 
-  selectHandler(event: Event, idx: number) {
-    this.fileList[idx].selected = (event.target as HTMLInputElement).checked;
-    this.fileList = [...this.fileList];
-  }
-
-  selectAllHandler(event: Event) {
-    this.fileList.forEach((item) => {
-      item.selected =
-        (event.target as HTMLInputElement).checked && !(item.progress === 100);
-    });
-    this.fileList = [...this.fileList];
-  }
 }

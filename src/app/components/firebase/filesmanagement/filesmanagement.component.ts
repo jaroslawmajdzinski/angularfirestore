@@ -3,15 +3,16 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+ } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   EMPTY,
   Subscription,
   catchError,
+  combineLatestWith,
   concatMap,
   delay,
+  exhaustMap,
   filter,
   forkJoin,
   take,
@@ -38,13 +39,13 @@ import { TFileList } from '../management/filesmanagement.types';
 })
 export class FilesmanagementComponent implements OnInit {
   @ViewChild('fileDownload') anchor!: ElementRef<HTMLAnchorElement>;
-  @ViewChild('selectAll')selectAll!: ElementRef<HTMLInputElement>;
+  @ViewChild('selectAll') selectAll!: ElementRef<HTMLInputElement>;
   @ViewChild('drawer') drawer!: MatDrawer;
 
   filesList: TFileList[] = [];
-  sub!: Subscription;
+  private _sub = new Subscription();
   path: string[] = [];
- 
+
   fileMetadata!: IFileMetadata;
 
   constructor(
@@ -55,45 +56,57 @@ export class FilesmanagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getListHandler().subscribe();
-    //this.sub.add(sub)
-    
-    this._managementServise.getNewFile().pipe(
-      tap(newFile=>{
-       
-        this.filesList.unshift(newFile)
-        this.filesList = [...this.filesList]
-      
-      })
-    ).subscribe()
-    //this.sub.add(sub)  
+    let sub =  this.getListHandler().subscribe();
+    this._sub.add(sub);
+
+    sub =  this._managementServise
+      .getNewFile()
+      .pipe(
+        combineLatestWith(this._managementServise.getPath()),
+        tap(([newFile, path]) => {
+          console.log(newFile.uploadPath, path)
+          if (newFile.uploadPath === path) {
+            this.filesList.unshift(newFile);
+            this.filesList = [...this.filesList];
+          }
+        })
+      )
+      .subscribe();
+    this._sub.add(sub);
+  }
+
+  ngOnDestroy() {
+    this._sub.unsubscribe();
   }
 
   getListHandler() {
     return this._managementServise.getPath().pipe(
-      concatMap(path=>this._storageService.listAllFiles(path).pipe(
-        tap(
-          (items) =>
-            (this.filesList = [
-              ...items.map((item) => ({
-                ...item,
-                selected: false,
-                progress: 0,
-                loaded: false,
-              })),
-            ])
-        ),
-       )),
-       catchError(this.errorHandler)
-       )
-    }
+      concatMap((path) =>
+        this._storageService.listAllFiles(path).pipe(
+          tap(
+            (items) =>
+              (this.filesList = [
+                ...items.map((item) => ({
+                  ...item,
+                  selected: false,
+                  progress: 0,
+                  loaded: false,
+                  uploadPath: '',
+                })),
+              ])
+          )
+        )
+      ),
+      catchError(this.errorHandler)
+    );
+  }
 
   selectAllHandler($event: Event) {
     this.filesList.forEach((item, i) => {
       if (!item.isDirectory) {
         const checked = ($event.target as HTMLInputElement).checked;
         item.selected = checked && item.selected ? false : checked;
-        item.progress = item.selected ? 0 : item.progress;
+        //item.progress = item.selected ? 0 : item.progress;
       }
     });
     this.filesList = [...this.filesList];
@@ -107,7 +120,61 @@ export class FilesmanagementComponent implements OnInit {
     this.filesList = [...this.filesList];
   }
 
+  deleteDirectory(idx: number) {
+    
+  const question = (path: string) =>
+      this.dialog({
+        title: 'Question',
+        message: `Would you like to delet this directory?`,
+        actionAreaConfig: [
+          { label: 'Yes', color: 'primary' },
+          { label: 'No', color: 'warn', dismiss: true },
+        ],
+      }).pipe(
+        filter((res) => res !== 'dismiss' && res !== undefined),
+        concatMap((_) => this._storageService.deleteFile(path).pipe(
+          tap(_=>{
+            this.filesList.splice(idx,1)
+            this.filesList = [...this.filesList]
+          })
+        ))
+      );
+
+    this._managementServise
+      .getPath()
+      .pipe(
+        take(1),
+        exhaustMap((path) => {
+          return this._storageService
+            .hasFiles(path + '/' + this.filesList[idx].name)
+            .pipe(
+              concatMap((isEmpty) => {
+                console.log('isEmpty', isEmpty.length);
+                if(isEmpty.length>1){
+                  return this._dialog
+                  .open(MessageDialogComponent, {
+                    data: {
+                      title: 'Info',
+                      message: `Choosen directory is not empty!`,
+                      actionAreaConfig: [{ label: 'Ok', color: 'primary', dismiss: true }],
+                    },
+                  }).afterClosed()
+                } else if (isEmpty[0]){
+                  return question(isEmpty[0])
+                }
+                return EMPTY
+              })
+            );
+        })
+      )
+      .subscribe();
+  }
+
   deleteOneHandler(idx: number) {
+    if (this.filesList[idx].isDirectory) {
+      this.deleteDirectory(idx);
+      return;
+    }
     this.dialog({
       title: 'Question',
       message: `Do you want to delet ${this.filesList[idx].name} file?`,
@@ -121,7 +188,7 @@ export class FilesmanagementComponent implements OnInit {
         concatMap(() =>
           this._storageService.deleteFile(this.filesList[idx].fullPath)
         ),
-        tap(() =>this._managementServise.emitCurrPath()),
+        tap(() => this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
       )
       .subscribe();
@@ -148,20 +215,18 @@ export class FilesmanagementComponent implements OnInit {
             catchError(this.errorHandler)
           )
         ),
-            tap(()=>this.selectAll.nativeElement.checked = false)
-        )
+        tap(() => (this.selectAll.nativeElement.checked = false))
+      )
       .subscribe();
   }
 
   openDirectory(idx: number) {
     if (this.filesList[idx].fullPath === '..') {
-      this._managementServise.goUpDir()
+      this._managementServise.goUpDir();
     } else {
       this._managementServise.goDirDown(this.filesList[idx].name);
     }
   }
-
-  
 
   createDirctory() {
     this._dialog
@@ -169,16 +234,16 @@ export class FilesmanagementComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((result) => result),
-        concatMap((result) =>this._managementServise.getPath()
-              .pipe(
-                take(1),
-                concatMap(path=>this._storageService.createDirectory(
-                path + `/${result}`
-              )
-            ),)
-        ),  
-        
-    tap(_ => this._managementServise.emitCurrPath()),
+        concatMap((result) =>
+          this._managementServise.getPath().pipe(
+            take(1),
+            concatMap((path) =>
+              this._storageService.createDirectory(path + `/${result}`)
+            )
+          )
+        ),
+
+        tap((_) => this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
       )
       .subscribe();
@@ -229,8 +294,8 @@ export class FilesmanagementComponent implements OnInit {
     )
       .pipe(
         delay(300),
-        tap(_ => {
-          this.selectAll.nativeElement.checked = false
+        tap((_) => {
+          this.selectAll.nativeElement.checked = false;
           this.filesList = [
             ...this.filesList.map((item) => ({ ...item, selected: false })),
           ];

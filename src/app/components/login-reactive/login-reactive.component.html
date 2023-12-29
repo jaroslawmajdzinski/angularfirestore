@@ -1,15 +1,15 @@
-<div class="w-full h-[90vh] flex items-center justify-center">
+<div class="w-full h-[90vh] flex justify-center">
 
 <div
-  class="sm:w-[50%] w-full bg-primary-200 pb-4  mx-auto my-auto rounded-md shadow-lg border-primary-400 border-2"
+  class="sm:w-[50%] h-[300px] w-full bg-primary-200 pb-4  rounded-md shadow-lg border-primary-400 border-2"
 >
 <div class="py-2 px-4 bg-primary-400 text-lg text text-primary-contrast-100">{{formTitle}}</div>
 
-  <form [formGroup]="registrationForm">
-    <div class="flex flex-col sm:grid sm:grid-cols-2 pt-8 px-8 ">
+  <form (submit)="sendHandler()" [formGroup]="registrationForm" id="loginform">
+    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-8 px-8 ">
       <label class="text-primary-700" for="email">E-mail: </label>
 
-      <div class="flex flex-col">
+      <div class="flex flex-col col-span-2">
         <input
           class="input"
           id="email"
@@ -18,7 +18,7 @@
           
           />
 
-        <div class="h-[22px]">
+        <div class="min-h-[42px]">
           <span class="text-xs text-red-700" *ngIf="formErrors['email']">{{
             formErrors["email"]
           }}</span>
@@ -26,10 +26,10 @@
       </div>
     </div>
 
-    <div class="flex flex-col sm:grid sm:grid-cols-2 pt-4 px-8">
+    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-4 px-8">
       <label class="text-primary-700" for="password">Password: </label>
 
-      <div class="flex flex-col">
+      <div class="flex flex-col col-span-2">
         <input
           class="input"
           id="password"
@@ -39,28 +39,41 @@
           
           />
 
-        <div>
+        <div class="min-h-[42px]">
           <span class="text-xs text-red-700" *ngIf="formErrors['password']">{{
             formErrors["password"]
           }}</span>
         </div>
       </div>
     </div>
+    
   </form>
-  <div class="px-4 flex justify-start">  
-  <button
-   type="submit"
-    [ngClass]="{
-      'bg-primary-400 hover:bg-primary-700 text-white font-bold py-2 px-4 m-2 rounded': true,
-      'bg-primary-400 hover:bg-primary-700 cursor-not-allowed':
-        !registrationForm.valid,
-      'bg-primary-600 hover:bg-primary-700': registrationForm.valid
-    }"
-    [disabled]="!registrationForm.valid"
-    (click)="sendHandler()"
-    >
-    Submit
-  </button>
+  <div class="flex justify-end">  
+  
+    <div class="px-2">  
+      <button
+        appButton="accent"
+        class="w-[100px]"
+        [disabled]="!registrationForm.dirty"
+        (click)="registrationForm.reset()"
+        >
+        Reset
+      </button>
+    </div>
+
+    <div class="px-2">  
+      <button
+       type="submit"
+        form="loginform" 
+        class="w-[100px]"
+        appButton="primary"
+        [disabled]="!registrationForm.valid"
+        >
+        Submit
+      </button>
+    </div>
+
+  </div>
+  </div>
 </div>
-</div>
-</div>
+

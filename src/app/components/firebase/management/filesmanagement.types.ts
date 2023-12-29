@@ -7,6 +7,7 @@ export interface IFilesList{
     fullPath: string;
     isDirectory: boolean;
     loaded: boolean;
+    uploadPath: string;
 }
 
 export interface IUploadFileList{

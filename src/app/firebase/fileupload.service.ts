@@ -4,10 +4,10 @@ import {
   AngularFireStorage,
   AngularFireStorageReference,
 } from '@angular/fire/compat/storage';
-import { tap, concat, from, map, last, catchError, EMPTY, Observable, Subject, concatMap, of, take, takeLast, filter, exhaustAll, exhaustMap } from 'rxjs';
+import { tap, concat, from, map,  Observable,  take,  filter, exhaustMap } from 'rxjs';
 import { User } from './models/user.model';
 import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';
-import { HttpClient } from '@angular/common/http';
+
 
 
 @Injectable({
@@ -33,13 +33,17 @@ export class FileuploadService {
 
   uploadFileToStorage(file: File, path: string) {
     if (this._user) {
-      console.log('path upload', path)
+      //console.log('path upload', path)
       // @ts-ignore
       const filePath = `${this._rootPath}/${this._user['multiFactor']['user'].uid}${path===""? "" : "/" + path}/${file.name}`;
       const storageRef = this._storage.ref(filePath);
       const uploadTask = this._storage.upload(filePath, file);
      
-      return concat(uploadTask.percentageChanges(), storageRef.getDownloadURL())
+      const fileUrl$ = storageRef.getDownloadURL().pipe(
+        map(url=>({uploadPath: path, url: url}))
+      )
+
+      return concat(uploadTask.percentageChanges(), fileUrl$ )
     }
 
     return null;
@@ -68,6 +72,7 @@ export class FileuploadService {
               fullPath: item.name,
               isDirectory: true,
             }));
+            
             //prepare path if has parent
             let lastDir = [];
             if (directory) {
@@ -94,6 +99,24 @@ export class FileuploadService {
     )
   }
 
+  hasFiles(directory = ""){
+    return this._auth.getUserData$().pipe(
+      filter(user=>user!==null),
+      take(1),
+      exhaustMap(usr=>{
+        // @ts-ignore
+          const path = `${this._rootPath}/${usr['multiFactor']['user'].uid}/${directory}`;
+          const listRef = ref(this._storage.storage, path);
+          return from(listAll(listRef)).pipe(
+            map(result=>{
+              console.log(result.prefixes, result.items)
+              const filesCount = [...result.prefixes, ...result.items.filter((item) => item.name !== '.dir')].map(item=>item.fullPath)
+              return  [...filesCount, ...result.items.filter(item=>item.name===".dir").map(item=>item.fullPath)]            })
+          )
+        })
+      )
+  }
+
   deleteFile(fullPath: string) {
     const fileRef = ref(this._storage.storage,fullPath);
     return from(deleteObject(fileRef));
@@ -106,7 +129,7 @@ export class FileuploadService {
   }
 
   downloadFile(fullPathWithName: string){
-    console.log(fullPathWithName)
+    //console.log(fullPathWithName)
     // @ts-ignore
    const filesURLS$ = new Observable<string>((subscriber)=>{
       const fileRef = ref(this._storage.storage, fullPathWithName)

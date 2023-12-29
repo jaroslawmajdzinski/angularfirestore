@@ -30,7 +30,7 @@
           </div>
           <!--header-->
           <div class="p-2 py-3 bg-primary-500">
-            <input (click)="selectAllHandler($event)" type="checkbox" #selectAll/>
+            <input (click)="selectAllHandler($event)" [checked]="filesList | selected" type="checkbox" #selectAll/>
           </div>
           <div class="col-span-4 bg-primary-500 text-white py-3">Name</div>
           <div class="col-span-2 bg-primary-500">
@@ -69,6 +69,7 @@
                 type="checkbox"
                 *ngIf="!item.isDirectory"
               />
+              
             </div>
             <!--directory-->
             <div
@@ -105,11 +106,10 @@
               <div
                 class="flex justify-end items-center h-full pr-4"
                 (click)="deleteOneHandler(idx)"
-                *ngIf="!item.isDirectory"
               >
                 <mat-icon
                   class="text-primary-500 hover:text-primary-300 cursor-pointer"
-                  >delete</mat-icon
+                  *ngIf="item.fullPath!=='..'">delete</mat-icon
                 >
               </div>
             </div>

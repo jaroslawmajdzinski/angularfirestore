@@ -8,11 +8,11 @@
 <table class="table-fixed w-full border-separate border-spacing-y-1">
     <thead class="bg-primary-500 text-white h-[45px]" *ngIf="fileList.length || filesInProgress.length">
         <th class="p-2 w-[40px]">
-            <input (click)="selectAllHandler($event)" type="checkbox" #selectAll/>
+            <input (click)="selectAllHandler($event)" [checked]="selected>0" type="checkbox" #selectAll/>
         </th>
         <th class="text-left">Name</th>
         <th>
-           <div class="flex justify-end" *ngIf="fileList | selected"> 
+           <div class="flex justify-end" *ngIf="selected>0"> 
             <button
             mat-flat-button
             class="mr-2"
@@ -34,7 +34,7 @@
 
     <tbody [@newElement]="fileList.length">
        
-        <tr class="bg-primary-50" *ngFor="let item of fileList;let idx = index">
+        <tr class="bg-primary-50" *ngFor="let item of fileList;let idx = index; trackBy: trackByFn ">
             <td class="p-2 pl-3 "><input type="checkbox" (click)="selectHandler($event, idx)"  [checked]="item.selected"/></td>
             <td>{{item.file.name}}</td>
             <td></td>

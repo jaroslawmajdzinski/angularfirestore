@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { MatDialog } from '@angular/material/dialog';
-import { Route, Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { BehaviorSubject, exhaustMap, tap, of } from 'rxjs';
 
 
@@ -17,11 +17,13 @@ export class AuthService {
 
     this._afAuth.authState.pipe(
       tap(user=>{
+        //console.log('start', user)
         if(user){
-         
-          localStorage.setItem('userData', JSON.stringify(user))
+         localStorage.setItem('userData', JSON.stringify(user))
+          
           this._user$.next(user)
           this._router.navigate(['/files'])
+        
         } else {
           localStorage.removeItem('userData')
           this._user$.next(null)
@@ -34,8 +36,27 @@ export class AuthService {
 
 
    signIn(email: string, password: string){
-    return this._afAuth.signInWithEmailAndPassword(email, password).then()
+    return this._afAuth.signInWithEmailAndPassword(email, password).then(result=>{
+      this.sendVeryficationMail();
+
+    })
    }
+
+   sendVeryficationMail(){
+     return this._afAuth.currentUser
+        .then(u=>u?.sendEmailVerification())
+        .then(_=>{
+
+        })
+      }
+
+   forgotPassword(email: string){
+    return this._afAuth.sendPasswordResetEmail(email).then(_=>{
+
+    }).catch(err=>{
+      console.error(err.message)
+    })
+   }    
 
    signUp(email: string, password: string){
     return this._afAuth.createUserWithEmailAndPassword(email, password).then()
