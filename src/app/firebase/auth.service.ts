@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { AngularFireAuth } from '../modules/fire/compat/auth';
 import { MatDialog } from '@angular/material/dialog';
 import {  Router } from '@angular/router';
 import { BehaviorSubject, exhaustMap, tap, of } from 'rxjs';

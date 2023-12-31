@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import {
   AngularFireStorage,
-  AngularFireStorageReference,
-} from '@angular/fire/compat/storage';
+ 
+} from '../modules/fire/compat/storage';
 import { tap, concat, from, map,  Observable,  take,  filter, exhaustMap, EMPTY, of } from 'rxjs';
 import { User } from './models/user.model';
 import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';

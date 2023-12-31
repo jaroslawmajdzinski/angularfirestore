@@ -12,7 +12,7 @@ export class TailwindThemeService {
     @Inject(DOCUMENT) private readonly document: Document,
    
   ) {}
-loadConfig(configUrl = './assets/theme.config.json'): Observable<any> {
+loadConfig(configUrl = './assets/theme.json'): Observable<any> {
     
     return this._http
       .get(`${configUrl}`)
