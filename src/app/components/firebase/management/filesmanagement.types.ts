@@ -13,6 +13,7 @@ export interface IFilesList{
 export interface IUploadFileList{
     file: File;
     inprogress: boolean;
+    pathToUpload: string;
     
 }
 

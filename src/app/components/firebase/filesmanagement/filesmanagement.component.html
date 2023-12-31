@@ -1,45 +1,59 @@
+<mat-card-header class="header">
+  <h2 class="text-primary-600">Your storage</h2></mat-card-header
+>
+<mat-drawer-container class="overflow-hidden rounded-b-lg">
+  <mat-drawer class="w-[250px]" position="end" #drawer>
+    <app-fileinfo
+      (close)="drawer.close()"
+      [fileMetadata]="fileMetadata"
+    ></app-fileinfo>
+  </mat-drawer>
 
+  <mat-drawer-content class="content">
+      <div class="flex justify-between items-center text-primary-700 text-lg bg-slate-100">
+      <!--curr path-->
+      <div>
+        <app-path />
+      </div>
+      
+      <!--Create directory-->
+      <div>
+        <div class="flex justify-end">
+          <span (click)="createDirctory()" class="pr-4 p-2">
+            <mat-icon
+              class="text-primary-500 hover:text-primary-400 cursor-pointer transition-all duration-150"
+              >create_new_folder</mat-icon
+            >
+          </span>
+        </div>
+      </div>
+    </div>
 
-   <mat-card-header class="header"> <h2 class="text-primary-600">Your files</h2></mat-card-header>
-      <mat-drawer-container>
-      <mat-drawer class="w-[250px]" position="end" #drawer>
-        <app-fileinfo
-          (close)="drawer.close()"
-          [fileMetadata]="fileMetadata"
-        ></app-fileinfo>
-      </mat-drawer>
-
-      <mat-drawer-content>
-        <div class="grid grid-cols-7 gap-y-1 mt-1">
-          <!--curr path-->
-          <div class="col-span-6 text-lg text-primary-700 bg-slate-100">
-            <app-path/>
-          </div>
-          <!--curr path end-->
-
-          <!--Create directory-->
-          <div class="bg-slate-100">
-            <div class="flex justify-end">
-              <span (click)="createDirctory()" class="pr-4 p-2">
-                <mat-icon
-                  class="text-primary-500 hover:text-primary-400 cursor-pointer"
-                  >create_new_folder</mat-icon
-                >
-              </span>
-            </div>
-          </div>
-          <!--header-->
-          <div class="p-2 py-3 bg-primary-500">
-            <input (click)="selectAllHandler($event)" [checked]="filesList | selected" type="checkbox" #selectAll/>
-          </div>
-          <div class="col-span-4 bg-primary-500 text-white py-3">Name</div>
-          <div class="col-span-2 bg-primary-500">
+      <!--header-->
+      <table class="table-fixed w-full border-separate border-spacing-y-[2px] text-primary-700">
+        <thead class="bg-primary-500 text-white h-[45px]">
+          <th class="p-2 w-[40px]">
+            <input
+              (click)="selectAllHandler($event)"
+              [checked]="filesList | selected"
+              type="checkbox"
+              #selectAll
+            />
+          </th>
+          <th  class="text-left">Name</th>
+          <th colspan="2">
             <div
               class="h-full flex justify-end items-center"
+              @tools
               *ngIf="filesList | selected"
             >
-              <button (click)="downloadFiles()" mat-flat-button>
-                <mat-icon>download</mat-icon>Download
+              <button
+                (click)="downloadFiles()"
+                class="transition-all duration-300"
+                mat-flat-button
+              >
+                <mat-icon>download</mat-icon
+                ><span class="hidden lg:inline">Download</span>
               </button>
 
               <button
@@ -48,72 +62,72 @@
                 color="warn"
                 class="button"
               >
-                <mat-icon>delete</mat-icon>Delete
+                <mat-icon>delete</mat-icon
+                ><span class="hidden lg:inline">Delete</span>
               </button>
             </div>
-          </div>
-
-          <!--Files list-->
-
-          <ng-container *ngFor="let item of filesList; let idx = index">
-            <div
-              class="p-2 pl-3"
-              [ngClass]="{
-                'bg-primary-50': !item.selected,
-                'bg-primary-100': item.selected
-              }"
+          </th>
+        </thead>
+        <tbody [@newElement]="filesList.length">
+          <tr class="h-[40px] transition-all duration-300"
+            [ngClass]="{
+            'bg-primary-50': !item.selected,
+            'bg-primary-100': item.selected
+          }"
+           
+            *ngFor="let item of filesList; let idx = index; trackBy: trackByFn"
             >
+            <td class="p-2 pl-3">
               <input
                 [checked]="item.selected"
                 (click)="selectOneHandler($event, idx)"
                 type="checkbox"
                 *ngIf="!item.isDirectory"
               />
-              
-            </div>
-            <!--directory-->
-            <div
-              class="col-span-3 bg-primary-50 py-2 cursor-pointer"
-              (click)="openDirectory(idx)"
-              *ngIf="item.isDirectory; else file"
-            >
-              {{ item.fullPath }}<span>/</span>
-            </div>
-            <!--file-->
-            <ng-template #file>
+            </td>
+            <td>
               <div
-                [ngClass]="{
-                  'bg-primary-50': !item.selected,
-                  'bg-primary-100': item.selected
-                }"
-                (click)="showFileMetadata(idx)"
-                class="col-span-3 bg-primary-50 py-2 cursor-pointer"
+                class="cursor-pointer w-full"
+                (click)="openDirectory(idx)"
+                *ngIf="item.isDirectory; else file"
               >
-                {{ item.name }}
-              </div>
-            </ng-template>
+                {{ item.fullPath }}<span>/</span>
+            </div>
 
-            <div class="col-span-2 pt-4" [ngClass]="{
-              'bg-primary-50': !item.selected,
-              'bg-primary-100': item.selected
-            }"><mat-progress-bar class="my-progress-bar" [value]="item.progress" mode="determinate"  *ngIf="item.selected || item.loaded"></mat-progress-bar></div>
-            <div
-              [ngClass]="{
-                'bg-primary-50': !item.selected,
-                'bg-primary-100': item.selected
-              }"
-            >
+              <ng-template #file>
+                <div
+              
+                  (click)="showFileMetadata(idx)"
+                  class="cursor-pointer w-full"
+                >
+                  {{ item.name }}
+              </div>
+              </ng-template>
+            </td>
+            <td>
+              <mat-progress-bar
+                class="my-progress-bar"
+                [value]="item.progress"
+                mode="determinate"
+                @progress
+                *ngIf="item.selected || item.loaded"
+              ></mat-progress-bar>
+            </td>
+            <td>
               <div
-                class="flex justify-end items-center h-full pr-4"
+                class="flex justify-end items-center pr-3"
                 (click)="deleteOneHandler(idx)"
               >
                 <mat-icon
-                  class="text-primary-500 hover:text-primary-300 cursor-pointer"
-                  *ngIf="item.fullPath!=='..'">delete</mat-icon
+                  class="text-primary-500 hover:text-primary-300 cursor-pointer transition-all duration-150"
+                  *ngIf="item.fullPath!=='..'"
+                  >delete</mat-icon
                 >
               </div>
-            </div>
-          </ng-container>
-        </div>
-      </mat-drawer-content>
-    </mat-drawer-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+  </mat-drawer-content>
+</mat-drawer-container>

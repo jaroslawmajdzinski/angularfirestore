@@ -12,30 +12,52 @@ import {
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
 import {  TUploadFilesList } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
-import { animate, query, stagger, state, style, transition, trigger } from '@angular/animations';
+import { animate, query, stagger,  style, transition, trigger } from '@angular/animations';
+
+const animations = [
+  trigger('newElement', [
+    
+   transition("*<=>*", [
+   query(":enter",
+     [
+      style({opacity: "0", transform: "scale(0.1)"}),
+      stagger('60ms', animate('200ms', style({opacity: 1, transform: "scale(1)"})))
+    ], {optional: true}
+   ),
+   query(":leave",
+     [
+      animate('200ms', style({opacity: 0, transform: "scale(0.1)"}))
+    ], {optional: true}
+   )
+  ])
+  ]),
+  trigger('tools', [
+    transition(':enter' , [
+     style({opacity: "0", transform: "translateX(400px)"}),
+     animate('400ms', style({opacity: "1", transform: "translateX(0px)"}))
+   ]),
+   transition(':leave' , [
+     style({opacity: "1"}),
+     animate('400ms', style({opacity: "0", transform: "translateX(400px)"}))
+   ])
+ ] ),
+ trigger('tableHeader', [
+  transition(':enter' , [
+   style({opacity: "0", width: "0px"}),
+   animate('400ms', style({opacity: "1", width: "45px"}))
+ ]),
+ transition(':leave' , [
+   style({opacity: "1"}),
+   animate('400ms', style({opacity: "0",  width: "45px"}))
+ ])
+] )
+]
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
-  animations: [
-    trigger('newElement', [
-      
-     transition("*<=>*", [
-     query(":enter",
-       [
-        style({opacity: "0", transform: "scale(0.1)"}),
-        stagger('60ms', animate('200ms', style({opacity: 1, transform: "scale(1)"})))
-      ], {optional: true}
-     ),
-     query(":leave",
-       [
-        animate('200ms', style({opacity: 0, transform: "scale(0.1)"}))
-      ], {optional: true}
-     )
-    ])
-    ]),
-  ],
+  animations: animations
 })
 
 export class UploadComponent {
@@ -48,10 +70,17 @@ export class UploadComponent {
 
   selected = 0
 
+  private _currPath!: string
+
   constructor(
     private _uploadService: FileuploadService,
     private _mangement: ManagementService
   ) {}
+
+
+    ngOnInit(){
+      this._mangement.getPath().pipe(tap(path=>this._currPath=path)).subscribe()
+    }
 
   handleFileUpload() {
     const files = this.fileInput.nativeElement.files || [];
@@ -62,6 +91,7 @@ export class UploadComponent {
         progress: 0,
         inprogress: false,
         selected: false,
+        pathToUpload: ""
       })),
       ...this.fileList,
     ];
@@ -76,22 +106,30 @@ export class UploadComponent {
 
   selectHandler(event: Event, idx: number) {
     const selected = (event.target as HTMLInputElement).checked;
-    this.removeAdd(this.fileList[idx].selected, selected)
-    this.fileList[idx].selected = selected
-    
+    this.selectOne(this.fileList[idx], selected)
+}
+
+  selectOne(item: TUploadFilesList, selected: boolean){
+    this.removeAdd(item.selected, selected)  
+    item.selected = selected
+    if(selected){
+      item.pathToUpload = this._currPath
+    } else {
+      item.inprogress = false
+    }
   }
 
   selectAllHandler(event: Event) {
     const selected = (event.target as HTMLInputElement).checked;
     this.fileList.filter(item=>!item.inprogress).forEach((item) => {
-      this.removeAdd(item.selected, selected)  
-      item.selected = selected
-  });
+      this.selectOne(item, selected)
+    });
    
   }
 
   //move selected files and in queue to upload
   moveToUpload(){
+    
     this.selectAll.nativeElement.checked = false;
     
     this.filesInProgress = [...this.fileList.filter((item) =>item.inprogress || item.selected)];
@@ -102,12 +140,13 @@ export class UploadComponent {
   }
 
   //move to queue if work is in progress
-  moveInQueue(){
+  moveIntoTheQueue(){
     if (this.filesInProgress.length) {
       this.fileList
         .filter((item) => item.selected)
         .forEach((item) => {
           item.inprogress = true;
+          item.selected = false
         });
         this.selected = 0
         return true;
@@ -123,61 +162,47 @@ export class UploadComponent {
 
   uploadSelectedFiles() {
     
-    if(this.moveInQueue()) return  
-
+    if(this.moveIntoTheQueue()) return  
     this.moveToUpload()
 
-    const inprogressList = this.filesInProgress
-            .map((item, idx) => ({ ...item, idx: idx }))
-            .filter((item) => item.selected && !(item.progress === 100))
-            .map(item=>this.filesInProgress[item.idx].inprogress = true)
-    
-    forkJoin(
+     forkJoin(
       this.filesInProgress
-        .map((item, idx) => ({ ...item, idx: idx }))
         .filter((item) => item.selected && !(item.progress === 100))
         .map((item) => {
-          this.filesInProgress[item.idx].inprogress = true;
-          return this._mangement.getPath().pipe(
-            take(1),
-            concatMap(
-              (path) =>
-                this._uploadService
+          item.inprogress = true;
+          return  this._uploadService
                   .uploadFileToStorage(
-                    this.filesInProgress[item.idx].file,
-                    path
+                    item.file,
+                    item.pathToUpload
                   )
-                  ?.pipe(
-                    scan((progress, curr: number | {uploadPath: string, url: string} | undefined) => {
+                  .pipe(
+                    scan((progress, curr: number | string) => {
                       if (typeof curr === 'number') {
-                        this.filesInProgress[item.idx].progress = curr;
+                        item.progress = curr;
                       } 
                       return curr;
                     }),
                     tap(url=>{
                       if(typeof url !=='number')
                       this._mangement.newFile({
-                        name: this.filesInProgress[item.idx].file.name,
+                        name: item.file.name,
                         progress: 0,
                         selected: false,
                         isDirectory: false,
                         loaded: false,
-                        fullPath: url?.url || "",
-                        uploadPath: url?.uploadPath || ""
+                        fullPath: url,
+                        uploadPath: item.pathToUpload
                       });
                     }),
                     catchError(err=>{
                       console.error(err.message)
                       return EMPTY
                     })
-                    ) || EMPTY
-            )
-          );
-        })
-    )
-      .pipe(
-        tap((_) => {
-         
+                    )
+                  })
+                  )
+       .pipe(
+        tap(() => {
           this.filesInProgress = [
             ...this.filesInProgress.filter((item) => item.progress !== 100),
           ];

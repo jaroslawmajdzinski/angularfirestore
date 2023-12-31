@@ -4,7 +4,7 @@ import {
   AngularFireStorage,
   AngularFireStorageReference,
 } from '@angular/fire/compat/storage';
-import { tap, concat, from, map,  Observable,  take,  filter, exhaustMap } from 'rxjs';
+import { tap, concat, from, map,  Observable,  take,  filter, exhaustMap, EMPTY, of } from 'rxjs';
 import { User } from './models/user.model';
 import { uploadString, ref, listAll, deleteObject, getMetadata, getDownloadURL } from 'firebase/storage';
 
@@ -33,25 +33,21 @@ export class FileuploadService {
 
   uploadFileToStorage(file: File, path: string) {
     if (this._user) {
-      //console.log('path upload', path)
-      // @ts-ignore
-      const filePath = `${this._rootPath}/${this._user['multiFactor']['user'].uid}${path===""? "" : "/" + path}/${file.name}`;
+      const filePath = `${this._rootPath}/${this._user.uid}${path===""? "" : "/" + path}/${file.name}`;
       const storageRef = this._storage.ref(filePath);
       const uploadTask = this._storage.upload(filePath, file);
      
-      const fileUrl$ = storageRef.getDownloadURL().pipe(
-        map(url=>({uploadPath: path, url: url}))
-      )
+      const fileUrl$ = storageRef.getDownloadURL()
 
       return concat(uploadTask.percentageChanges(), fileUrl$ )
     }
 
-    return null;
+    return of(null);
   }
 
   createDirectory(fullPath: string) {
-    // @ts-ignore
-    const storageRef = ref(this._storage.storage, `${this._rootPath}/${this._user['multiFactor']['user'].uid}${fullPath===""? "" : "/" + fullPath}/.dir`);
+    if(!this._user) return of(null)
+    const storageRef = ref(this._storage.storage, `${this._rootPath}/${this._user.uid}${fullPath===""? "" : "/" + fullPath}/.dir`);
     return from(uploadString(storageRef, ''));
   }
 
@@ -62,7 +58,7 @@ export class FileuploadService {
     take(1),
     exhaustMap(usr=>{
       // @ts-ignore
-        const path = `${this._rootPath}/${usr['multiFactor']['user'].uid}/${directory}`;
+        const path = `${this._rootPath}/${usr.uid}/${directory}`;
         const listRef = ref(this._storage.storage, path);
         return  from(listAll(listRef)).pipe(
           map((res) => {
@@ -104,8 +100,7 @@ export class FileuploadService {
       filter(user=>user!==null),
       take(1),
       exhaustMap(usr=>{
-        // @ts-ignore
-          const path = `${this._rootPath}/${usr['multiFactor']['user'].uid}/${directory}`;
+          const path = `${this._rootPath}/${usr.uid}/${directory}`;
           const listRef = ref(this._storage.storage, path);
           return from(listAll(listRef)).pipe(
             map(result=>{
@@ -129,8 +124,6 @@ export class FileuploadService {
   }
 
   downloadFile(fullPathWithName: string){
-    //console.log(fullPathWithName)
-    // @ts-ignore
    const filesURLS$ = new Observable<string>((subscriber)=>{
       const fileRef = ref(this._storage.storage, fullPathWithName)
       getDownloadURL(fileRef).then(url=>{

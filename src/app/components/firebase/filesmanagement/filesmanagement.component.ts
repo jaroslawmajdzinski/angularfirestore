@@ -31,11 +31,52 @@ import {
 import { IDialogConfig } from '../../message-dialog/message-dialog.types';
 import { ManagementService } from '../management/management.service';
 import { TFileList } from '../management/filesmanagement.types';
+import { animate, query, stagger, state, style, transition, trigger } from '@angular/animations';
+
+const animations = [
+ trigger('newElement', [
+    
+    transition("*<=>*", [
+    query(":enter",
+      [
+       style({opacity: "0", transform: "scale(0.1)"}),
+       stagger('60ms', animate('200ms', style({opacity: "1", transform: "scale(1)"})))
+     ], {optional: true}
+    ),
+    query(":leave",
+      [
+       animate('200ms', style({opacity: "0", transform: "scale(0.1)"}))
+     ], {optional: true}
+    )
+   ])
+   ]),
+   trigger('tools', [
+     transition(':enter' , [
+      style({opacity: "0", transform: "translateX(400px)"}),
+      animate('400ms', style({opacity: "1", transform: "translateX(0px)"}))
+    ]),
+    transition(':leave' , [
+      style({opacity: "1"}),
+      animate('400ms', style({opacity: "0", transform: "translateX(400px)"}))
+    ])
+  ] ),
+  trigger('progress', [
+    transition(':enter' , [
+      style({opacity: "0"}),
+      animate('400ms', style({opacity: "1"}))
+    ]),
+    transition(':leave' , [
+      style({opacity: "1"}),
+      animate('400ms', style({opacity: "0"}))
+    ])
+  ])
+]
 
 @Component({
   selector: 'app-filesmanagement',
   templateUrl: './filesmanagement.component.html',
   styleUrls: ['./filesmanagement.component.scss'],
+  animations: animations
 })
 export class FilesmanagementComponent implements OnInit {
   @ViewChild('fileDownload') anchor!: ElementRef<HTMLAnchorElement>;
@@ -331,4 +372,9 @@ export class FilesmanagementComponent implements OnInit {
     URL.revokeObjectURL(objectUrl);
     document.body.removeChild(a);
   }
+
+  trackByFn(index: number, item: TFileList){
+    return index.toString() + item.name
+  }
+
 }
