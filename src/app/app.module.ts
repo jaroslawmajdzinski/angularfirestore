@@ -1,6 +1,6 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,10 +11,10 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { NavbuttonComponent } from './components/navbar/navbutton/navbutton.component';
 import { AngularFireModule} from '@angular/fire/compat'
 import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
-import {  AngularFirestoreModule} from './modules/fire/compat/firestore'
+import {  AngularFirestoreModule} from '@angular/fire/compat/firestore'
 import { environment } from './firebase/firebase';
-import { FirebaseOptions } from './modules/fire/app';
-import { AngularFireAuthModule } from './modules/fire/compat/auth';
+import { FirebaseOptions } from '@angular/fire/app';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginReactiveComponent } from './components/login-reactive/login-reactive.component';
 import { ReactiveFormsModule } from '@angular/forms';
