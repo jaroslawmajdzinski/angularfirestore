@@ -68,31 +68,36 @@
             </div>
           </th>
         </thead>
-        <tbody [@newElement]="filesList.length">
-          <tr class="h-[40px] transition-all duration-300"
+        </table>
+
+      <div class="relative flex flex-col transition-all duration-150" [@newElement]="filesList.length"  [ngStyle]="{'height': height()}">
+      
+        <div [ngStyle]="{'top': top(idx) }" class="grid grid-cols-10 h-[40px] w-full absolute transition-all duration-300"
             [ngClass]="{
             'bg-primary-50': !item.selected,
             'bg-primary-100': item.selected
           }"
            
             *ngFor="let item of filesList; let idx = index; trackBy: trackByFn"
-            >
-            <td class="p-2 pl-3">
+        >
+          
+            <div class="p-2 pl-3">
               <input
                 [checked]="item.selected"
                 (click)="selectOneHandler($event, idx)"
                 type="checkbox"
                 *ngIf="!item.isDirectory"
               />
-            </td>
-            <td>
-              <div
-                class="cursor-pointer w-full"
-                (click)="openDirectory(idx)"
-                *ngIf="item.isDirectory; else file"
-              >
-                {{ item.fullPath }}<span>/</span>
             </div>
+          
+            <div class="col-span-5 flex items-center">
+                <div
+                  class="cursor-pointer w-full"
+                  (click)="openDirectory(idx)"
+                  *ngIf="item.isDirectory; else file"
+                >
+                  {{ item.fullPath }}<span>/</span>
+              </div>
 
               <ng-template #file>
                 <div
@@ -103,8 +108,9 @@
                   {{ item.name }}
               </div>
               </ng-template>
-            </td>
-            <td>
+            </div>
+            
+            <div class="col-span-3 flex items-center">
               <mat-progress-bar
                 class="my-progress-bar"
                 [value]="item.progress"
@@ -112,10 +118,10 @@
                 @progress
                 *ngIf="item.selected || item.loaded"
               ></mat-progress-bar>
-            </td>
-            <td>
+            </div>
+            <div>
               <div
-                class="flex justify-end items-center pr-3"
+                class="flex justify-end items-center h-full pr-3"
                 (click)="deleteOneHandler(idx)"
               >
                 <mat-icon
@@ -124,10 +130,12 @@
                   >delete</mat-icon
                 >
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+           </div>
+          </div>
+        
+      
+      
       
   </mat-drawer-content>
 </mat-drawer-container>

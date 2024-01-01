@@ -4,6 +4,7 @@ import { LoginReactiveComponent } from './components/login-reactive/login-reacti
 
 import { ManagementComponent } from './components/firebase/management/management.component';
 import { authGuard } from './auth.guard';
+import { LoginReactiveNewComponent } from './components/login-reactive-new/login-reactive.component';
 
 
 const routes: Routes = [

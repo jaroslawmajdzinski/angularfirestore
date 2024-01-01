@@ -1,25 +1,29 @@
 <div class="flex flex-col rounded-sm rounded-t overflow-hidden">
   <div class="flex justify-between items-center p-4 bg-primary-100">
-    <div class="text-primary-600 font-medium text-xl p-0">Files to upload</div>    
-    <button (click)="fileInput.click()" mat-flat-button>
-          Chose files
-        </button>
-      </div>
-    
-<table class="table-fixed w-full border-separate border-spacing-y-1">
-    <thead class="bg-primary-500 text-white h-[45px]" @tableHeader *ngIf="fileList.length || filesInProgress.length">
-        <th class="p-2 w-[40px]">
-            <input (click)="selectAllHandler($event)" [checked]="selected>0" type="checkbox" #selectAll/>
-        </th>
-        <th class="text-left">Name</th>
-        <th>
-           <div class="flex justify-end" @tools *ngIf="selected>0"> 
-            <button
-            mat-flat-button
-            class="mr-2"
-            (click)="uploadSelectedFiles()"
-          >
-            <mat-icon>upload</mat-icon><span class="hidden lg:inline">Upload</span>
+    <div class="text-primary-600 font-medium text-xl p-0">Files to upload</div>
+    <button (click)="fileInput.click()" mat-flat-button>Chose files</button>
+  </div>
+
+  <table class="table-fixed w-full border-separate border-spacing-y-1">
+    <thead
+      class="bg-primary-500 text-white h-[45px]"
+      @tableHeader
+      *ngIf="fileList.length || filesInProgress.length"
+    >
+      <th class="p-2 w-[40px]">
+        <input
+          (click)="selectAllHandler($event)"
+          [checked]="selected > 0"
+          type="checkbox"
+          #selectAll
+        />
+      </th>
+      <th class="text-left">Name</th>
+      <th>
+        <div class="flex justify-end" @tools *ngIf="selected > 0">
+          <button mat-flat-button class="mr-2" (click)="uploadSelectedFiles()">
+            <mat-icon>upload</mat-icon
+            ><span class="hidden lg:inline">Upload</span>
           </button>
           <button
             mat-flat-button
@@ -27,59 +31,90 @@
             class="ml-2 mr-2"
             (click)="removeFilesHandler()"
           >
-            <mat-icon>delete</mat-icon><span class="hidden lg:inline">
-              Clear            </span>
+            <mat-icon>delete</mat-icon
+            ><span class="hidden lg:inline"> Clear </span>
           </button>
         </div>
-        </th>
+      </th>
     </thead>
+  </table>
 
-    <tbody [@newElement]="fileList.length">
-       
-        <tr class="bg-primary-50" *ngFor="let item of fileList;let idx = index; trackBy: trackByFn ">
-            <td class="p-2 pl-3 "><input type="checkbox" (click)="selectHandler($event, idx)"  [checked]="item.selected" *ngIf="!item.inprogress"/></td>
-            <td>{{item.file.name}}</td>
-            <td>
-
-              <mat-progress-bar
-                class="my-progress-bar"
-                [value]="item.progress"
-                mode="indeterminate" *ngIf="item.inprogress"></mat-progress-bar>
-
-            </td>
-        </tr>
+  <div
+    [ngStyle]="{ height: heightList() }"
+    class="relative transition-all duration-200"
+    [@newElement]="fileList.length"
+  >
+    <div
+      [ngStyle]="{ top: top(idx) }"
+      class="absolute bg-primary-50 grid grid-cols-10 h-[32px] w-full"
+      *ngFor="let item of fileList; let idx = index; trackBy: trackByFn"
+    >
+  
+      <div class="p-2 pl-3">
+        <input
+          type="checkbox"
+          (click)="selectHandler($event, idx)"
+          [checked]="item.selected"
+          *ngIf="!item.inprogress"
+        />
+      </div>
+      
+      <div class="col-span-5 px-3 flex items-center">{{ item.file.name }}</div>
+      
+      <div class="col-span-4 flex items-center">
+        <mat-progress-bar
+          class="my-progress-bar"
+          [value]="item.progress"
+          mode="indeterminate"
+          *ngIf="item.inprogress"
+        ></mat-progress-bar>
+      </div>
     
-        <tr class="bg-primary-200 text-white" *ngIf="filesInProgress.length">
-          <td></td><td colspan="2">Inprogress</td>
-        </tr>
+    </div>
+  
+  </div>
 
-    <ng-container *ngFor="let item of filesInProgress; let idx = index">  
-        <tr class="bg-primary-100" *ngIf="item.progress!==100">
-            <td class="p-2 pl-3  border"></td>
-            <td>{{item.file.name}}</td>
-            <td class="px-3">
-                
-                <mat-progress-bar
-                class="my-progress-bar"
-                [value]="item.progress"
-                mode="determinate"
-                *ngIf="item.progress>0; else wait"
-                ></mat-progress-bar>
-             
-                <ng-template #wait>
-                <mat-progress-bar
-                class="my-progress-bar"
-                [value]="item.progress"
-                mode="indeterminate"></mat-progress-bar>
-               </ng-template>
-             
-              </td>
-          </tr>
-        </ng-container>
-    </tbody>
+  <div
+    class="relative bg-primary-200 text-white h-[32px] flex items-center pl-4"
+    *ngIf="filesInProgress.length"
+  >
+    Inprogress
+  </div>
 
-</table>
+  <div
+    [ngStyle]="{ height: heightListInProgress() }"
+    class="relative transition-all duration-200"
+    [@newElement]="listInProgressLength()"
+  >
+    <ng-container *ngFor="let item of filesInProgress; let idx = index">
+      <div
+      [ngStyle]="{ top: top(idx) }"
+        class="absolute grid grid-cols-10 bg-primary-100 w-full h-[32px]"
+        *ngIf="item.progress !== 100"
+      >
+        <div class="p-2 pl-3"></div>
+        <div class="col-span-5 flex items-center">{{ item.file.name }}</div>
+        <div class="col-span-4 px-3 flex items-center">
+          <mat-progress-bar
+            class="my-progress-bar"
+            [value]="item.progress"
+            mode="determinate"
+            *ngIf="item.progress > 0; else wait"
+          ></mat-progress-bar>
+
+          <ng-template #wait>
+            <mat-progress-bar
+              class="my-progress-bar"
+              [value]="item.progress"
+              mode="indeterminate"
+            ></mat-progress-bar>
+          </ng-template>
+        </div>
+      </div>
+    </ng-container>
+  </div>
 </div>
+
 <input
   class="absolute z-30"
   type="file"

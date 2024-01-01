@@ -118,6 +118,7 @@ $custom-theme: mat.define-light-theme((
 
 
 @include mat.core-theme($custom-theme);
+
 @include mat.button-theme($custom-theme);
 @include mat.fab-theme($custom-theme);
 @include mat.icon-theme($custom-theme);
@@ -126,7 +127,11 @@ $custom-theme: mat.define-light-theme((
 @include mat.dialog-theme($custom-theme);
 @include mat.list-theme($custom-theme);
 @include mat.input-theme($custom-theme);
+@include mat.checkbox-theme($custom-theme);
+@include mat.form-field-theme($custom-theme);
 @include mat.card-theme($custom-theme);
 @include mat.progress-bar-theme($custom-theme);
+
+
 //@include mat.all-component-themes($custom-theme);
 

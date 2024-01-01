@@ -1,8 +1,8 @@
 .input{
-    @apply outline-none border-primary-300 rounded-sm p-1 focus:border-primary-400 border-2;
+    @apply outline-none bg-transparent border-primary-100 rounded-sm p-1 focus:border-primary-400 border-2;
 }
 .ng-invalid.ng-touched{
-    @apply border-danger-500;
+    @apply border-danger-300;
 }
 .field{
     @apply text-xs p-0;

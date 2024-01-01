@@ -12,3 +12,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .letter-spacing{
     letter-spacing: 2px;
 }
+
+.mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }

@@ -88,6 +88,7 @@ export class FilesmanagementComponent implements OnInit {
   path: string[] = [];
 
   fileMetadata!: IFileMetadata;
+  
 
   constructor(
     public _storageService: FileuploadService,
@@ -114,6 +115,14 @@ export class FilesmanagementComponent implements OnInit {
       )
       .subscribe();
     this._sub.add(sub);
+  }
+
+  top(index: number){
+    return `${index * (40 + 2)}px`
+  }
+
+  height(){
+    return `${this.filesList.length * 42}px`
   }
 
   ngOnDestroy() {

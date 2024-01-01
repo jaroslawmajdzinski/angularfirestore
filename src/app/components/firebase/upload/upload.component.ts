@@ -10,7 +10,7 @@ import {
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
-import {  TUploadFilesList } from '../management/filesmanagement.types';
+import {  TFileList, TUploadFilesList } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
 import { animate, query, stagger,  style, transition, trigger } from '@angular/animations';
 
@@ -82,8 +82,25 @@ export class UploadComponent {
       this._mangement.getPath().pipe(tap(path=>this._currPath=path)).subscribe()
     }
 
+    top(index: number){
+      return `${index * (32 + 2)}px`
+    }
+  
+    heightList(){
+      return `${this.fileList.length * 34}px`
+    }  
+
+    listInProgressLength(){
+      return this.filesInProgress.filter(item=>item.progress!==100).length
+    }
+
+    heightListInProgress(){
+      return `${this.listInProgressLength() * 34}px`
+    } 
+
   handleFileUpload() {
     const files = this.fileInput.nativeElement.files || [];
+    
 
     this.fileList = [
       ...Array.from(files).map((item) => ({
@@ -95,6 +112,18 @@ export class UploadComponent {
       })),
       ...this.fileList,
     ];
+
+    const list = this.fileList.reduce((acc, cur)=>{
+      const dup = acc.filter(it=>it.file.name===cur.file.name)
+      if(!dup.length){
+        acc.push(cur)
+      }
+      return acc
+    }, [] as TUploadFilesList[])
+
+    this.fileList = [...list]
+
+    this.fileInput.nativeElement.value = ""
   }
 
   //select files on the list
@@ -167,8 +196,8 @@ export class UploadComponent {
 
      forkJoin(
       this.filesInProgress
-        .filter((item) => item.selected && !(item.progress === 100))
-        .map((item) => {
+        .filter((item) => (item.selected || item.inprogress) && !(item.progress === 100))
+        .map((item, idx) => {
           item.inprogress = true;
           return  this._uploadService
                   .uploadFileToStorage(
@@ -193,7 +222,7 @@ export class UploadComponent {
                         fullPath: url,
                         uploadPath: item.pathToUpload
                       });
-                    }),
+                     }),
                     catchError(err=>{
                       console.error(err.message)
                       return EMPTY

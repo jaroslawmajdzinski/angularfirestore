@@ -1,13 +1,13 @@
 <div class="w-full h-[85vh] flex justify-center">
 
 <div
-  class="sm:w-[60%] h-[320px] w-full bg-primary-100 pb-4  rounded-md shadow-lg border-primary-500 border-2"
+  class="sm:w-[50%] h-[300px] w-full  pb-4 "
 >
-<h2 class="py-2 px-4 bg-primary-500 text-lg text text-primary-contrast-100">{{formTitle}}</h2>
+<h2 class="py-2 px-4 text-primary-500  border-primary-400 border-b-2">{{formTitle}}</h2>
 
   <form (submit)="sendHandler()" [formGroup]="registrationForm" id="loginform">
-    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-8 px-8 ">
-      <label class="text-primary-700" for="email">E-mail: </label>
+    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-8 px-8 text-primary-600">
+      <label class="text-primary-500" for="email">E-mail: </label>
 
       <div class="flex flex-col col-span-2">
         
@@ -30,7 +30,7 @@
     </div>
 
     <div class="flex flex-col sm:grid sm:grid-cols-3 pt-4 px-8">
-      <label class="text-primary-700" for="password">Password: </label>
+      <label class="text-primary-00" for="password">Password: </label>
 
       <div class="flex flex-col col-span-2">
         <input
@@ -55,7 +55,8 @@
   
     <div class="px-2">  
       <button
-        appButton="accent"
+        mat-stroked-button
+        color="accent"
         class="w-[100px]"
         [disabled]="!registrationForm.dirty"
         (click)="registrationForm.reset()"
@@ -69,7 +70,8 @@
        type="submit"
         form="loginform" 
         class="w-[100px]"
-        appButton="primary"
+        color="primary"
+        mat-stroked-button
         [disabled]="!registrationForm.valid"
         >
         Submit

@@ -31,6 +31,8 @@ import { FormDialogComponent } from './components/form-dialog/form-dialog.compon
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
+import { LoginReactiveNewComponent } from './components/login-reactive-new/login-reactive.component';
+import { RouterModule } from '@angular/router';
 
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
@@ -55,7 +57,8 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FormDialogComponent,
     FileinfoComponent,
     PathComponent,
-    ManagementComponent
+    ManagementComponent,
+    LoginReactiveNewComponent
   ],
   imports: [
     BrowserModule,
