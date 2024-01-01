@@ -2,9 +2,11 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 
 import {
   EMPTY,
+  Subject,
   catchError,
   concatMap,
   forkJoin,
+  mergeMap,
   scan,
   take,
   tap,
@@ -72,14 +74,27 @@ export class UploadComponent {
 
   private _currPath!: string
 
+  private _newFileToUpload = new Subject<TUploadFilesList>()
+
   constructor(
     private _uploadService: FileuploadService,
     private _mangement: ManagementService
   ) {}
 
+    
 
     ngOnInit(){
+      
       this._mangement.getPath().pipe(tap(path=>this._currPath=path)).subscribe()
+      
+      this._newFileToUpload.pipe(
+        tap(item=>{
+          const idx = this.fileList.findIndex(item=>item.file.name===item.file.name)
+          this.fileList.splice(idx, 1)
+          this.filesInProgress.push(item)
+        }),
+        mergeMap(item=>this.uploadFile(item))
+      ).subscribe()    
     }
 
     top(index: number){
@@ -101,27 +116,27 @@ export class UploadComponent {
   handleFileUpload() {
     const files = this.fileInput.nativeElement.files || [];
     
+    let newFiles = [...Array.from(files).map((item) => ({
+      file: item,
+      progress: 0,
+      inprogress: false,
+      selected: false,
+      pathToUpload: ""
+    }))] as TUploadFilesList[]
+
+   newFiles = newFiles.reduce((acc, item)=>{
+    const idx = this.fileList.findIndex(it=>it.file.name===item.file.name)
+    if(idx===-1){
+      acc.push(item)
+    }
+    return acc
+   }, [] as TUploadFilesList[])
 
     this.fileList = [
-      ...Array.from(files).map((item) => ({
-        file: item,
-        progress: 0,
-        inprogress: false,
-        selected: false,
-        pathToUpload: ""
-      })),
+      ...newFiles
+      ,
       ...this.fileList,
     ];
-
-    const list = this.fileList.reduce((acc, cur)=>{
-      const dup = acc.filter(it=>it.file.name===cur.file.name)
-      if(!dup.length){
-        acc.push(cur)
-      }
-      return acc
-    }, [] as TUploadFilesList[])
-
-    this.fileList = [...list]
 
     this.fileInput.nativeElement.value = ""
   }
@@ -156,92 +171,56 @@ export class UploadComponent {
    
   }
 
-  //move selected files and in queue to upload
-  moveToUpload(){
-    
-    this.selectAll.nativeElement.checked = false;
-    
-    this.filesInProgress = [...this.fileList.filter((item) =>item.inprogress || item.selected)];
-    this.fileList = [
-      ...this.fileList.filter((item) => !(item.inprogress || item.selected)),
-    ];
-    this.selected = 0
-  }
-
-  //move to queue if work is in progress
-  moveIntoTheQueue(){
-    if (this.filesInProgress.length) {
-      this.fileList
-        .filter((item) => item.selected)
-        .forEach((item) => {
-          item.inprogress = true;
-          item.selected = false
-        });
-        this.selected = 0
-        return true;
-    }
-    return false
-  }
+   
 
   listAllFiles() {
     this._uploadService.listAllFiles().subscribe();
   }
 
   
-
-  uploadSelectedFiles() {
-    
-    if(this.moveIntoTheQueue()) return  
-    this.moveToUpload()
-
-     forkJoin(
-      this.filesInProgress
-        .filter((item) => (item.selected || item.inprogress) && !(item.progress === 100))
-        .map((item, idx) => {
-          item.inprogress = true;
-          return  this._uploadService
-                  .uploadFileToStorage(
-                    item.file,
-                    item.pathToUpload
-                  )
-                  .pipe(
-                    scan((progress, curr: number | string) => {
-                      if (typeof curr === 'number') {
-                        item.progress = curr;
-                      } 
-                      return curr;
-                    }),
-                    tap(url=>{
-                      if(typeof url !=='number')
-                      this._mangement.newFile({
-                        name: item.file.name,
-                        progress: 0,
-                        selected: false,
-                        isDirectory: false,
-                        loaded: false,
-                        fullPath: url,
-                        uploadPath: item.pathToUpload
-                      });
-                     }),
-                    catchError(err=>{
-                      console.error(err.message)
-                      return EMPTY
-                    })
-                    )
-                  })
-                  )
-       .pipe(
-        tap(() => {
-          this.filesInProgress = [
-            ...this.filesInProgress.filter((item) => item.progress !== 100),
-          ];
-          this.uploadSelectedFiles();
-        })
+  uploadFile(item: TUploadFilesList){
+    return   this._uploadService
+    .uploadFileToStorage(
+      item.file,
+      item.pathToUpload
+    )
+    .pipe(
+      scan((progress, curr: number | string) => {
+        if (typeof curr === 'number') {
+          item.progress = curr;
+        } 
+        return curr;
+      }),
+      tap(url=>{
+        if(typeof url !=='number'){
+        this._mangement.newFile({
+          name: item.file.name,
+          progress: 0,
+          selected: false,
+          isDirectory: false,
+          loaded: false,
+          fullPath: url,
+          uploadPath: item.pathToUpload
+        });
+        const idx = this.filesInProgress.findIndex(item=>item.file.name===item.file.name)
+        this.filesInProgress.splice(idx, 1)
+      }
+       }),
+      catchError(err=>{
+        console.error(err.message)
+        return EMPTY
+      })
       )
-      .subscribe();
   }
 
-  
+  startUpload(){
+   this.fileList.filter(item=>item.selected).forEach(item=>
+    this._newFileToUpload.next(item)
+   )
+   this.selectAll.nativeElement.checked =  false
+   this.selected = 0
+  }
+
   removeAdd(item: boolean, checkbox: boolean){
     if(item===checkbox) return 
     if(item<checkbox) {

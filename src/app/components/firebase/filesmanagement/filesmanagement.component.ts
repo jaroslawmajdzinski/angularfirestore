@@ -383,7 +383,7 @@ export class FilesmanagementComponent implements OnInit {
   }
 
   trackByFn(index: number, item: TFileList){
-    return index.toString() + item.name
+    return  item.name
   }
 
 }
