@@ -8,7 +8,9 @@ import { Directive, ElementRef, HostBinding, Input, Renderer2 } from '@angular/c
 export class ButtonDirective {
 
   @Input()appButton!: string
-  @Input()class!: string
+  
+
+  @HostBinding('class')classes!: string 
 
   private _baseClasses = `
   py-2 
@@ -36,18 +38,31 @@ export class ButtonDirective {
   constructor(private _render2: Renderer2, private _el: ElementRef<HTMLElement>) { }
 
   ngAfterViewInit(){
+
+    
     const currVariant = this.appButton || "primary"
     const colorVariant = this.color[currVariant  as keyof typeof this.color]
-    const classes = this._el.nativeElement.classList
+    
     const content = this._el.nativeElement.textContent || this._el.nativeElement.innerText
     this._el.nativeElement.innerText = ""
+    
+    const newElem = this._render2.createElement('div')
+    this.addClasses(newElem, "w-full flex justify-center letter-spacing font-normal")
+    
+    
+    const text = this._render2.createText(content)
+    this._render2.appendChild(newElem, text)
+    
+    this.classes = `${this._baseClasses} ${colorVariant} ${this.classes? this.classes :  ""}`
+    this._render2.appendChild( this._el.nativeElement, newElem)
+  }
 
-    const newElem = document.createElement("div")
-    newElem.innerText = content
-    newElem.setAttribute('class', "w-full flex justify-center letter-spacing")
-   
-    this._el.nativeElement.setAttribute('class', `${this._baseClasses} ${colorVariant} ${classes}`)
-    this._el.nativeElement.appendChild(newElem)
+  addClasses(elem: any, classes: string){
+    classes.split(" ").forEach(
+        (cls)=>{
+          this._render2.addClass(elem, cls)
+        }
+      )
   }
 
 }

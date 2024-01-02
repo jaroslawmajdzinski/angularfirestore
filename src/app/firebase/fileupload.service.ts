@@ -38,9 +38,10 @@ export class FileuploadService {
       const uploadTask = this._storage.upload(filePath, file);
      
       const fileUrl$ = storageRef.getDownloadURL()
-
-      return concat(uploadTask.percentageChanges(), fileUrl$ )
-    }
+      
+      return concat(uploadTask.snapshotChanges(), fileUrl$ )
+      
+     }
 
     return of(null);
   }

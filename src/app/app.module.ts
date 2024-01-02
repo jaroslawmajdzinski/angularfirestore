@@ -16,7 +16,6 @@ import { environment } from './firebase/firebase';
 import { FirebaseOptions } from '@angular/fire/app';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoginReactiveComponent } from './components/login-reactive/login-reactive.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 import { MaterialModule } from './material/material/material.module';
@@ -32,7 +31,8 @@ import { FileinfoComponent } from './components/firebase/filesmanagement/fileinf
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
 import { LoginReactiveNewComponent } from './components/login-reactive-new/login-reactive.component';
-import { RouterModule } from '@angular/router';
+import { FormerrorsPipe } from './components/login-reactive-new/formerrors.pipe';
+
 
 
 function initializeAppFactory(themeService: TailwindThemeService): () => Observable<any> {
@@ -46,7 +46,6 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     ButtonDirective,
     NavbarComponent,
     NavbuttonComponent,
-    LoginReactiveComponent,
     MessageDialogComponent,
     NavmenuComponent,
     UploadComponent,
@@ -58,7 +57,9 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FileinfoComponent,
     PathComponent,
     ManagementComponent,
-    LoginReactiveNewComponent
+    LoginReactiveNewComponent,
+    FormerrorsPipe,
+   
   ],
   imports: [
     BrowserModule,

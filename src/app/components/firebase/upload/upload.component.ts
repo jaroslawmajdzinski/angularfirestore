@@ -15,6 +15,7 @@ import { FileuploadService } from 'src/app/firebase/fileupload.service';
 import {  TFileList, TUploadFilesList } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
 import { animate, query, stagger,  style, transition, trigger } from '@angular/animations';
+import { UploadTaskSnapshot } from '@angular/fire/compat/storage/interfaces';
 
 const animations = [
   trigger('newElement', [
@@ -171,7 +172,8 @@ export class UploadComponent {
    
   }
 
-   
+ 
+  
 
   listAllFiles() {
     this._uploadService.listAllFiles().subscribe();
@@ -185,14 +187,15 @@ export class UploadComponent {
       item.pathToUpload
     )
     .pipe(
-      scan((progress, curr: number | string) => {
-        if (typeof curr === 'number') {
-          item.progress = curr;
+      scan((progress, curr: UploadTaskSnapshot | string) => {
+        if (typeof curr !== 'string') {
+          console.log(curr)
+          item.progress = Math.ceil((curr.bytesTransferred * 100) / curr.totalBytes)
         } 
         return curr;
       }),
       tap(url=>{
-        if(typeof url !=='number'){
+        if(typeof url ==='string'){
         this._mangement.newFile({
           name: item.file.name,
           progress: 0,

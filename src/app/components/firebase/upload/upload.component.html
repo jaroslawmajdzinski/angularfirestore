@@ -84,13 +84,13 @@
   <div
     [ngStyle]="{ height: heightListInProgress() }"
     class="relative transition-all duration-200"
-    [@newElement]="listInProgressLength()"
+    [@newElement]="filesInProgress.length"
   >
     <ng-container *ngFor="let item of filesInProgress; let idx = index">
       <div
       [ngStyle]="{ top: top(idx) }"
         class="absolute grid grid-cols-10 bg-primary-100 w-full h-[32px]"
-        *ngIf="item.progress !== 100"
+       
       >
         <div class="p-2 pl-3"></div>
         <div class="col-span-5 flex items-center">{{ item.file.name }}</div>
