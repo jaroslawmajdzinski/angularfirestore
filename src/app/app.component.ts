@@ -15,13 +15,13 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
     transition("*<=>*", [
     query(":enter",
       [
-       style({ position: "absolute", top: "88px", left:"0px", width: "100%",  opacity: "0", transform: "translateX(-100%)"}),
+       style({ position: "absolute", top: "88px", left:"0px", width: "100%",  opacity: "0", transform: "translateX(-100vw)"}),
        stagger('60ms', animate('200ms', style({opacity: "1", transform: "translateX(0)"})))
      ], {optional: true}
     ),
     query(":leave",
       [
-       animate('200ms', style({opacity: "0", transform: "translateX(100%)"}))
+       animate('200ms', style({opacity: "0", transform: "translateX(100vw)"}))
      ], {optional: true}
     )
    ])

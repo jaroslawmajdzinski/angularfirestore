@@ -33,11 +33,11 @@ export class AuthService {
 
    }
 
+   
 
    signIn(email: string, password: string){
     return this._afAuth.signInWithEmailAndPassword(email, password).then(result=>{
       this.sendVeryficationMail();
-
     })
    }
 

@@ -1,82 +1,132 @@
-<div class="w-full h-[85vh] flex justify-center">
+<div class="w-full h-[50vh] flex justify-center">
+  <div class="md:w-[400px] h-[300px] w-full pb-4">
+    <div class="flex items-center justify-around">
+      <img
+        width="100px"
+        src="./assets/images/folder-data-storage-svgrepo-com.svg"
+      />
 
-<div
-  class="sm:w-[60%] h-[320px] w-full bg-primary-100 pb-4  rounded-md shadow-lg border-primary-500 border-2"
->
-<h2 class="py-2 px-4 bg-primary-500 text-lg text text-primary-contrast-100">{{formTitle}}</h2>
+      <h2 class="py-2 px-4 text-primary-500 border-primary-400 border-b-[1px]">
+        {{ formTitle }}
+      </h2>
+    </div>
+    <form
+      (submit)="sendHandler()"
+      [formGroup]="registrationForm"
+      id="loginform"
+    >
+      <div class="flex flex-col pt-8 px-6 text-primary-600">
+        <div class="flex flex-col">
+          <label class="text-primary-500 pb-2" for="email">E-mail </label>
 
-  <form (submit)="sendHandler()" [formGroup]="registrationForm" id="loginform">
-    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-8 px-8 ">
-      <label class="text-primary-700" for="email">E-mail: </label>
-
-      <div class="flex flex-col col-span-2">
-        
-          
           <input
-          class="input"
-          id="email"
-          placeholder="E-mail"
-          formControlName="email"
-          required
-          />
-        
-
-        <div class="min-h-[42px]">
-          <span class="text-xs text-red-700" *ngIf="formErrors['email']">{{
-            formErrors["email"]
-          }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col sm:grid sm:grid-cols-3 pt-4 px-8">
-      <label class="text-primary-700" for="password">Password: </label>
-
-      <div class="flex flex-col col-span-2">
-        <input
-          class="input"
-          id="password"
-          placeholder="Password"
-          formControlName="password"
-          type="password"
-          
+            class="input"
+            id="email"
+            placeholder="E-mail"
+            formControlName="email"
+            required
           />
 
-        <div class="min-h-[42px]">
-          <span class="text-xs text-red-700" *ngIf="formErrors['password']">{{
-            formErrors["password"]
-          }}</span>
+          <div class="min-h-[42px]">
+            <span
+              class="text-xs text-red-400"
+              *ngIf="registrationForm.get('email') as constrol"
+              >{{
+                constrol.errors
+                  | formerrors : errorMessages["email"] : constrol.touched
+              }}</span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <div class="w-full flex justify-between">
+            <label class="text-primary-500 pb-2" for="password"
+              >Password:
+            </label>
+            <a class="text-sm cursor-pointer font-bold hover:text-primary-300"
+              >Forgot password?</a
+            >
+          </div>
+
+          <app-password icon="remove_red_eye">
+            <input
+              inputRef
+              id="password"
+              placeholder="Password"
+              formControlName="password"
+              type="password"
+            />
+          </app-password>
+
+         <div class="min-h-[22px]">
+            <span
+              class="text-xs text-red-400"
+              *ngIf="registrationForm.get('password') as constrol"
+              >{{
+                constrol.errors
+                  | formerrors : errorMessages["password"] : constrol.touched
+              }}</span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col" *ngIf="!isLogin">
+          <label class="text-primary-500 pb-2" for="confirmpassword"
+            >Confirm Password:
+          </label>
+
+          <app-password icon="remove_red_eye">
+            <input
+              inputRef
+              id="confirmpassword"
+              placeholder="Confirm password"
+             formControlName="confirmpassword"
+             type="password"
+            />
+          </app-password>
+
+          <div class="min-h-[42px]">
+            <span
+              class="text-xs text-red-400"
+              *ngIf="registrationForm.get('confirmpassword') as constrol"
+              >{{
+                constrol.errors
+                  | formerrors
+                    : errorMessages["confirmpassword"]
+                    : constrol.touched
+              }}</span
+            >
+          </div>
         </div>
       </div>
-    </div>
-    
-  </form>
-  <div class="flex justify-end">  
-  
-    <div class="px-2">  
-      <button
-        appButton="accent"
-        class="w-[100px]"
-        [disabled]="!registrationForm.dirty"
-        (click)="registrationForm.reset()"
+    </form>
+    <div class="flex flex-col justify-end">
+      <div class="px-6 py-2">
+        <button
+          class="submit"
+          type="submit"
+          form="loginform"
+          class="w-full"
+          color="primary"
+          mat-raised-button
+          [disabled]="!registrationForm.valid"
         >
-        Reset
-      </button>
-    </div>
+          Submit
+        </button>
+      </div>
 
-    <div class="px-2">  
-      <button
-       type="submit"
-        form="loginform" 
-        class="w-[100px]"
-        appButton="primary"
-        [disabled]="!registrationForm.valid"
+      <div class="px-6 py-2">
+        <button
+          mat-stroked-button
+          color="primary"
+          class="w-full"
+          [disabled]="!registrationForm.dirty"
+          (click)="registrationForm.reset()"
         >
-        Submit
-      </button>
+          Reset
+        </button>
+      </div>
     </div>
-
-  </div>
   </div>
 </div>
-

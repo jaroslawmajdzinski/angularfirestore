@@ -30,8 +30,10 @@ import { FormDialogComponent } from './components/form-dialog/form-dialog.compon
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
-import { LoginReactiveNewComponent } from './components/login-reactive-new/login-reactive.component';
-import { FormerrorsPipe } from './components/login-reactive-new/formerrors.pipe';
+import { LoginReactiveComponent } from './components/login-reactive/login-reactive.component';
+import { FormerrorsPipe } from './components/forms/formerrors.pipe';
+import { PasswordComponent } from './components/elements/formselements/password/password.component';
+import { InputRefDirective } from './components/elements/formselements/password/input-ref.directive';
 
 
 
@@ -57,8 +59,10 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FileinfoComponent,
     PathComponent,
     ManagementComponent,
-    LoginReactiveNewComponent,
+    LoginReactiveComponent,
     FormerrorsPipe,
+    PasswordComponent,
+    InputRefDirective,
    
   ],
   imports: [
