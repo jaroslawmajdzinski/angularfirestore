@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { MatDialog } from '@angular/material/dialog';
 import {  Router } from '@angular/router';
-import { BehaviorSubject, tap, of, from, concatMap, map} from 'rxjs';
+import { BehaviorSubject, tap, of, from, concatMap, map, throwError, iif, filter} from 'rxjs';
  
 @Injectable({
   providedIn: 'root'
@@ -36,9 +36,18 @@ export class AuthService {
 
    signIn(email: string, password: string){
     return from(this._afAuth.signInWithEmailAndPassword(email, password)).pipe(
-      map(result=>result.user)
-    )
-   }
+      map(result=>result.user),
+      filter(user=>user!==null),
+      concatMap(user=>
+        iif(()=>(user!==null && user.emailVerified),
+          of('SUCCESS'),
+        throwError(()=>({
+          message: 'You should verify your account firs!',
+          redirectoToUrl: '/verify'
+        }))
+      )
+    ))
+  }
 
    sendVeryficationMail(){
      return from(this._afAuth.currentUser
@@ -58,13 +67,11 @@ export class AuthService {
 
    signUp(email: string, password: string){
     return from(this._afAuth.createUserWithEmailAndPassword(email, password)).pipe(
-      concatMap(res=>{
-        if(res.user) return this.sendVeryficationMail().pipe(map(_=>res.user))
-        return of(null)
-      })
+      filter(res=>res.user!==null),
+      concatMap(res=>this.sendVeryficationMail().pipe(map(_=>res.user)),
+     )
     )
-      
-    }
+   }
     
    logout(){
     this._afAuth.signOut().then(()=>{

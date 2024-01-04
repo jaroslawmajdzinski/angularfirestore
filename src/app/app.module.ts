@@ -35,6 +35,8 @@ import { FormerrorsPipe } from './components/forms/formerrors.pipe';
 import { InputPasswordComponent } from './components/uielements/input_password/input_password.component';
 import { InputRefDirective } from './components/uielements/input_password/input-ref.directive';
 import { VerifyaccountComponent } from './components/verifyaccount/verifyaccount.component';
+import { FormComponent } from './components/forms/form/form.component';
+import { InputComponent } from './components/uielements/input/input.component';
 
 
 
@@ -64,6 +66,8 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     InputPasswordComponent,
     InputRefDirective,
     VerifyaccountComponent,
+    FormComponent,
+    InputComponent,
    
   ],
   imports: [

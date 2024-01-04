@@ -7,7 +7,9 @@ import { AuthService } from '../../firebase/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 import { PasswordConfirmation } from './passwordconfirmacion';
-import { EMPTY, catchError, tap } from 'rxjs';
+import { EMPTY, catchError, concatMap, filter, tap } from 'rxjs';
+import { FormshelperService } from '../forms/formshelper.service';
+import { formConfig } from '../forms/form.config';
 
 interface errorMessagesT {
   [key: string]: { [key: string]: string };
@@ -56,7 +58,8 @@ export class LoginReactiveComponent implements OnInit {
     private _authService: AuthService,
     private _router: Router,
     private _passwordConfirmation: PasswordConfirmation,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private _formGenerator: FormshelperService
   ) {}
 
   ngOnInit() {
@@ -66,7 +69,7 @@ export class LoginReactiveComponent implements OnInit {
     }
 
     this.registrationForm = this.registrationOrLoginForm()
-    
+   
   }
 
   sendHandler(){
@@ -78,38 +81,26 @@ export class LoginReactiveComponent implements OnInit {
   }
 
   signIn() {
-    
     this._authService.signIn(
       this.registrationForm.value.email || '',
       this.registrationForm.value.password || ''
     ).pipe(
-      tap(usr=>{
-        if(usr && usr.emailVerified){
-          this.registrationForm.reset();
-          const message = `You have logged in successfully!`;
-          const dialogRef = this.dialog.open(MessageDialogComponent, {
-          data: {
-            title: 'Info',
-            message: message,
-            actionAreaConfig: [
-              { label: 'Ok', color: 'primary', dismiss: true },
-            ],
-          },
-        });
-      
-      } else {
-        const dialogRef = this.dialog.open(MessageDialogComponent, {
-          data: {
-            title: 'Info',
-            message: 'You should verify your account firs!',
-            actionAreaConfig: [
-              { label: 'Ok', color: 'primary', dismiss: true },
-            ],
-          },
-        }).afterClosed().pipe(
-          tap(_=>this._router.navigate(['/verify']))).subscribe()
-      }
-     }),
+      concatMap(_=>{
+            this.registrationForm.reset();
+            const message = `You have logged in successfully!`;
+    
+            return  this.dialog.open(MessageDialogComponent, {
+            data: {
+              title: 'Info',
+              message: message,
+              actionAreaConfig: [
+                { label: 'Ok', color: 'primary', dismiss: true },
+              ],
+            },
+          }).afterClosed()
+        }  
+     
+    ),
      catchError(error=>this.handleErrorerror(error))
      ).subscribe()
     }
@@ -119,28 +110,28 @@ signUp(){
       this.registrationForm.value.email || '',
       this.registrationForm.value.password || ''
     ).pipe(
-      tap(user=>{
-        if(user){
+      tap(_=>{
           this._router.navigate(['/verify'])
-        }
         }
    ),
    catchError(error=>this.handleErrorerror(error))
    ).subscribe()
   }  
 
-  handleErrorerror = (error: {message: string})=>{
-    const message = 'Email or password problem\n' + error.message;
-    this.dialog.open(MessageDialogComponent, {
+  handleErrorerror = (error: {message: string, redirectoToUrl?: string})=>{
+    console.log(error)
+    return this.dialog.open(MessageDialogComponent, {
       data: {
         title: 'Error',
-        message: message,
+        message: error.message,
         actionAreaConfig: [
           { label: 'Ok', color: 'primary', dismiss: true },
         ],
       },
-    })
-    return EMPTY
+    }).afterClosed().pipe(
+      filter(_=>error.redirectoToUrl!==undefined),
+      tap(()=>this._router.navigate([error.redirectoToUrl]))
+    ) 
   }
 
   registrationOrLoginForm() {

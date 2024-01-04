@@ -1,4 +1,13 @@
-import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, ValidatorFn, Validators } from '@angular/forms';
+
+export enum EElementType {
+  'select' = 'select',
+  'checkbox' = 'checkbox',
+  'input' = 'input',
+  'password' = 'password',
+  'formGroupValidator' = 'formGroupValidator'
+}
+
 
 export interface IFormConfigSelect {
   elementType: 'select';
@@ -23,7 +32,7 @@ export type TMerg<T> = T & IFormConfigCommon;
 export interface IFormConfigCommon {
   controlName: string;
   label: string;
-  validators: Validators[];
+  validators: ValidatorFn[];
   errorsMessages: { [key: string]: string };
 }
 
@@ -44,7 +53,7 @@ export type TFormConfig =
 type u<T extends {}>= T
  
 
- export const formValidator = () => (formGroup: AbstractControl ):ValidationErrors  |  null =>{
+ export const formValidator = (formGroup: AbstractControl) =>{
     const password = formGroup.get('password');
     const confirmation = formGroup.get('confirmpassword')
 
@@ -62,8 +71,7 @@ export const formConfig: TFormConfig[] = [
   {
     controlName: 'email',
     label: 'Email',
-    elementType: 'select',
-    list: [['ram', 'tatatam']],
+    elementType: 'input',
     validators: [Validators.required, Validators.email],
     errorsMessages: {
       required: 'E-mail is required, please eneter',
@@ -84,5 +92,5 @@ export const formConfig: TFormConfig[] = [
     elementType: 'formGroupValidator',
     validator: formValidator
   }
-];
+]
 

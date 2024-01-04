@@ -3,6 +3,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import {
   EMPTY,
   Subject,
+  Subscription,
   catchError,
   concatMap,
   forkJoin,
@@ -74,8 +75,9 @@ export class UploadComponent {
   selected = 0
 
   private _currPath!: string
-
   private _newFileToUpload = new Subject<TUploadFilesList>()
+
+  private _sub = new Subscription()
 
   constructor(
     private _uploadService: FileuploadService,
@@ -85,9 +87,11 @@ export class UploadComponent {
     
 
     ngOnInit(){
+      this._sub.add(
+        this._mangement.getPath().pipe(tap(path=>this._currPath=path)).subscribe()
+      )
       
-      this._mangement.getPath().pipe(tap(path=>this._currPath=path)).subscribe()
-      
+      this._sub.add(  
       this._newFileToUpload.pipe(
         tap(item=>{
           const idx = this.fileList.findIndex(item=>item.file.name===item.file.name)
@@ -96,6 +100,12 @@ export class UploadComponent {
         }),
         mergeMap(item=>this.uploadFile(item))
       ).subscribe()    
+    )
+    
+    }
+
+    ngOnDestroy(){
+      this._sub.unsubscribe()
     }
 
     top(index: number){

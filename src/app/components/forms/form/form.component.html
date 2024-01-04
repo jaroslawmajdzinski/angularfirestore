@@ -1,0 +1,52 @@
+<form [formGroup]="formGroup">
+  <ng-container *ngFor="let field of formConfig">
+    <ng-template [ngIf]="field.elementType !== elements.formGroupValidator">
+      
+      <div class="flex flex-col">
+        <label class="text-primary-500 pb-2" [for]="field.controlName"
+          >{{field.label}}
+        </label>
+
+        <ng-container [ngSwitch]="field.elementType">
+        
+        <ng-template  [ngSwitchCase]="elements.input">
+        <app-input>
+          <input
+            type="input"
+            [id]="field.controlName"
+            [placeholder]="field.label"
+            [formControlName]="field.controlName"
+           />
+          </app-input>  
+        </ng-template>
+      
+        <ng-template  [ngSwitchCase]="elements.password">
+          <app-input-password icon="remove_red_eye">
+          <input
+            type="password"
+            inputRef
+            [id]="field.controlName"
+            [placeholder]="field.label"
+            [formControlName]="field.controlName"
+           />
+          </app-input-password>
+
+        </ng-template>
+
+
+      </ng-container>
+        
+        <div class="min-h-[42px]">
+          <span
+            class="text-xs text-red-400"
+            *ngIf="formGroup.get(field.controlName) as constrol"
+            >{{
+              constrol.errors
+                | formerrors : field.errorsMessages : constrol.touched
+            }}</span
+          >
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+</form>
