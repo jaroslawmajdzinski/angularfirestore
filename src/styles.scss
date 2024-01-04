@@ -16,3 +16,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-form-field-focus-overlay {
     background-color: transparent !important;
   }
+
+.mat-mdc-raised-button.mat-primary {
+    --mdc-protected-button-container-color: var(--primary-500);
+    --mdc-protected-button-label-text-color: #fff;
+}  

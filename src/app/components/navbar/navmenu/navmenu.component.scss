@@ -2,14 +2,14 @@
     @apply w-full;
 }
 .menu_toolbar{
-    @apply flex items-center justify-end text-white invisible sm:visible;
+    @apply flex items-center justify-end text-white invisible sm:visible mt-4;
     li{
         @apply p-1;
         .button-active{
         @apply bg-primary-600;
         }
         .logout{
-        @apply ml-6;
+        @apply ml-4;
         }
     }
       
@@ -23,7 +23,7 @@
         
         }
         .logout{
-            @apply bg-danger-200;
+            @apply bg-danger-100;
         }
     }
 }

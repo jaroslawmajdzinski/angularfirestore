@@ -11,6 +11,7 @@ export class NavmenuComponent {
  
   @Input()place: "toolbar" | "side" = "toolbar"
 
+  
   private _sub!: Subscription
   isLogged = false
   userEmail = ""

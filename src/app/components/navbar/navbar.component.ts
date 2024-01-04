@@ -10,7 +10,7 @@ export class NavbarComponent {
 
   @Output() public sideNavToggle = new EventEmitter() 
 
-  
+  userEmail!: string  
 
   ngOnInit(){
     
