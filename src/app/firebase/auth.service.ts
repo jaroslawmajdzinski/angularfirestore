@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { MatDialog } from '@angular/material/dialog';
 import {  Router } from '@angular/router';
-import { BehaviorSubject, exhaustMap, tap, of, from, concatMap, map, EMPTY } from 'rxjs';
-
-
+import { BehaviorSubject, tap, of, from, concatMap, map} from 'rxjs';
+ 
 @Injectable({
   providedIn: 'root'
 })
@@ -16,14 +15,12 @@ export class AuthService {
 
     this._afAuth.authState.pipe(
       tap(user=>{
-        //console.log('start', user)  
+          
         if(user){
           localStorage.setItem('userData', JSON.stringify(user))
         if(user.emailVerified){  
-            this._user$.next(user)
+           this._user$.next(user)
            this._router.navigate(['/files'])
-        } else{
-          //this._router.navigate(['/verify'])
         }
         } else {
           localStorage.removeItem('userData')
@@ -78,7 +75,5 @@ export class AuthService {
    getUserData$(){
     return this._user$
    }
-
-   
 }
 

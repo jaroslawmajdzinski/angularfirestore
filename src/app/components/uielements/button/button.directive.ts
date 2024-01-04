@@ -14,7 +14,7 @@ export class ButtonDirective {
 
   private _baseClasses = `
   py-2 
-  flex  items-center gap-x-2 
+  inline-flex justify-center items-center gap-x-2 
   text-sm font-semibold 
   rounded-[4px]  
   border 
@@ -46,14 +46,14 @@ export class ButtonDirective {
     const content = this._el.nativeElement.textContent || this._el.nativeElement.innerText
     this._el.nativeElement.innerText = ""
     
-    const newElem = this._render2.createElement('div')
-    this.addClasses(newElem, "w-full flex justify-center font-normal px-2")
+    //const newElem = this._render2.createElement('div')
+    //this.addClasses(newElem, "w-full flex justify-center font-normal px-2")
     
     const text = this._render2.createText(content)
-    this._render2.appendChild(newElem, text)
+    //this._render2.appendChild(newElem, text)
     
     this.classes = `${this._baseClasses} ${colorVariant} ${this.classes? this.classes :  ""}`
-    this._render2.appendChild( this._el.nativeElement, newElem)
+    //this._render2.appendChild( this._el.nativeElement, newElem)
   }
 
   addClasses(elem: any, classes: string){

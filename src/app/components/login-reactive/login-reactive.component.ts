@@ -1,13 +1,13 @@
 
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../firebase/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 import { PasswordConfirmation } from './passwordconfirmacion';
-import { EMPTY, catchError, concatMap, filter, tap } from 'rxjs';
+import { EMPTY, catchError, tap } from 'rxjs';
 
 interface errorMessagesT {
   [key: string]: { [key: string]: string };

@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {  Observable } from 'rxjs';
 import { TailwindThemeService } from './theme.service/theme.service';
-import { ButtonDirective } from './components/elements/style.directives/button.directive';
+import { ButtonDirective } from './components/uielements/button/button.directive';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { NavbuttonComponent } from './components/navbar/navbutton/navbutton.component';
 import { AngularFireModule} from '@angular/fire/compat'
@@ -25,15 +25,15 @@ import {AngularFireStorageModule} from '@angular/fire/compat/storage';
 import { SelectedPipe } from './components/firebase/upload/selected.pipe';
 import { FilesmanagementComponent } from './components/firebase/filesmanagement/filesmanagement.component';
 import { ActionareaComponent } from './components/message-dialog/actionarea/actionarea.component';
-import { ButtontestComponent } from './components/elements/style.directives/buttontest/buttontest.component';
+
 import { FormDialogComponent } from './components/form-dialog/form-dialog.component';
 import { FileinfoComponent } from './components/firebase/filesmanagement/fileinfo/fileinfo.component';
 import { PathComponent } from './components/firebase/filesmanagement/path/path.component';
 import { ManagementComponent } from './components/firebase/management/management.component';
 import { LoginReactiveComponent } from './components/login-reactive/login-reactive.component';
 import { FormerrorsPipe } from './components/forms/formerrors.pipe';
-import { PasswordComponent } from './components/elements/formselements/password/password.component';
-import { InputRefDirective } from './components/elements/formselements/password/input-ref.directive';
+import { InputPasswordComponent } from './components/uielements/input_password/input_password.component';
+import { InputRefDirective } from './components/uielements/input_password/input-ref.directive';
 import { VerifyaccountComponent } from './components/verifyaccount/verifyaccount.component';
 
 
@@ -55,14 +55,13 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     SelectedPipe,
     FilesmanagementComponent,
     ActionareaComponent,
-    ButtontestComponent,
     FormDialogComponent,
     FileinfoComponent,
     PathComponent,
     ManagementComponent,
     LoginReactiveComponent,
     FormerrorsPipe,
-    PasswordComponent,
+    InputPasswordComponent,
     InputRefDirective,
     VerifyaccountComponent,
    

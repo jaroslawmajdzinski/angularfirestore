@@ -9,9 +9,7 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.letter-spacing{
-    letter-spacing: 2px;
-}
+
 
 .mat-mdc-form-field-focus-overlay {
     background-color: transparent !important;
@@ -19,5 +17,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-mdc-raised-button.mat-primary {
     --mdc-protected-button-container-color: var(--primary-500);
-    --mdc-protected-button-label-text-color: #fff;
+    --mdc-protected-button-label-text-color: var(--primary-contrast-500);
 }  
+
+.mat-toolbar.mat-primary {
+    --mat-toolbar-container-background-color: var(--primary-500);
+    --mat-toolbar-container-text-color: var(--primary-contrast-500);
+}
