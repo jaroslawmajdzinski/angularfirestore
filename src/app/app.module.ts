@@ -34,6 +34,7 @@ import { LoginReactiveComponent } from './components/login-reactive/login-reacti
 import { FormerrorsPipe } from './components/forms/formerrors.pipe';
 import { PasswordComponent } from './components/elements/formselements/password/password.component';
 import { InputRefDirective } from './components/elements/formselements/password/input-ref.directive';
+import { VerifyaccountComponent } from './components/verifyaccount/verifyaccount.component';
 
 
 
@@ -63,6 +64,7 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FormerrorsPipe,
     PasswordComponent,
     InputRefDirective,
+    VerifyaccountComponent,
    
   ],
   imports: [

@@ -1,14 +1,18 @@
+:host{
+    @apply w-full;
+}
 .menu_toolbar{
-    @apply flex align-middle text-white invisible sm:visible;
+    @apply flex items-center justify-end text-white invisible sm:visible;
     li{
         @apply p-1;
         .button-active{
         @apply bg-primary-600;
         }
         .logout{
-        @apply pl-6;
+        @apply ml-6;
         }
-    }  
+    }
+      
 }
 .menu_side{
     @apply flex flex-col align-middle h-full;

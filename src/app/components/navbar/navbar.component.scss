@@ -1,7 +1,16 @@
-.toolbar{
-    @apply flex sm:justify-end justify-start align-middle w-full;
+:host{
+    @apply text-white;
 }
-.button{
-    color: white;
-    @apply sm:hidden;
+.toolbar{
+    @apply flex sm:justify-end justify-start align-middle w-full relative;
+}
+
+.title-shadow{
+    text-shadow: 0px 0px 3px rgba(166, 231, 255, 1);
+}
+.second-row{
+    @apply h-4;
+}
+.toolbar-height{
+    height: 85px;
 }

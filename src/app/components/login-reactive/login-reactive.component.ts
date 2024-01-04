@@ -7,6 +7,7 @@ import { AuthService } from '../../firebase/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialogComponent } from '../message-dialog/message-dialog.component';
 import { PasswordConfirmation } from './passwordconfirmacion';
+import { EMPTY, catchError, concatMap, filter, tap } from 'rxjs';
 
 interface errorMessagesT {
   [key: string]: { [key: string]: string };
@@ -68,21 +69,25 @@ export class LoginReactiveComponent implements OnInit {
     
   }
 
-  sendHandler() {
-    if (this.registrationForm.invalid) return;
+  sendHandler(){
+    if(this.isLogin){
+      this.signIn()
+    }else{
+      this.signUp()
+    }
+  }
 
-    const whereToSend = this.isLogin ? 'signIn' : 'signUp';
-
-    this._authService[whereToSend](
+  signIn() {
+    
+    this._authService.signIn(
       this.registrationForm.value.email || '',
       this.registrationForm.value.password || ''
-    )
-      .then((res) => {
-        this.registrationForm.reset();
-        const message = `You have ${
-          this.isLogin ? 'logged in' : 'registered'
-        } successfully!`;
-        const dialogRef = this.dialog.open(MessageDialogComponent, {
+    ).pipe(
+      tap(usr=>{
+        if(usr && usr.emailVerified){
+          this.registrationForm.reset();
+          const message = `You have logged in successfully!`;
+          const dialogRef = this.dialog.open(MessageDialogComponent, {
           data: {
             title: 'Info',
             message: message,
@@ -91,21 +96,51 @@ export class LoginReactiveComponent implements OnInit {
             ],
           },
         });
-        //console.log(res);
-      })
-      .catch((error) => {
-        //console.log(error.message);
-        const message = 'Email or password problem\n' + error.message;
+      
+      } else {
         const dialogRef = this.dialog.open(MessageDialogComponent, {
           data: {
-            title: 'Error',
-            message: message,
+            title: 'Info',
+            message: 'You should verify your account firs!',
             actionAreaConfig: [
               { label: 'Ok', color: 'primary', dismiss: true },
             ],
           },
-        });
-      });
+        }).afterClosed().pipe(
+          tap(_=>this._router.navigate(['/verify']))).subscribe()
+      }
+     }),
+     catchError(error=>this.handleErrorerror(error))
+     ).subscribe()
+    }
+  
+signUp(){
+    this._authService.signUp(
+      this.registrationForm.value.email || '',
+      this.registrationForm.value.password || ''
+    ).pipe(
+      tap(user=>{
+        if(user){
+          this._router.navigate(['/verify'])
+        }
+        }
+   ),
+   catchError(error=>this.handleErrorerror(error))
+   ).subscribe()
+  }  
+
+  handleErrorerror = (error: {message: string})=>{
+    const message = 'Email or password problem\n' + error.message;
+    this.dialog.open(MessageDialogComponent, {
+      data: {
+        title: 'Error',
+        message: message,
+        actionAreaConfig: [
+          { label: 'Ok', color: 'primary', dismiss: true },
+        ],
+      },
+    })
+    return EMPTY
   }
 
   registrationOrLoginForm() {

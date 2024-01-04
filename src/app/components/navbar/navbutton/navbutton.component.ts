@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-navbutton',
@@ -8,7 +8,10 @@ import { Component } from '@angular/core';
 export class NavbuttonComponent {
   open = false
     
+  @Output()toggle = new EventEmitter()
+
   clickHandler(){
      this.open =  !this.open
+    this.toggle.emit()   
   }  
 }

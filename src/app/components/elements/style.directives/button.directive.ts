@@ -16,10 +16,10 @@ export class ButtonDirective {
   py-2 
   flex  items-center gap-x-2 
   text-sm font-semibold 
-  rounded-md  
+  rounded-[4px]  
   border 
   border-transparent  
-  shadow-sm 
+  shadow-md 
   disabled:opacity-50 
   disabled:pointer-events-none 
   dark:focus:outline-none 
@@ -29,7 +29,7 @@ export class ButtonDirective {
  
   color = {
     "secondary": `bg-secondary-500 text-white hover:bg-secondary-400 `, 
-    "primary": `bg-primary-500 text-white hover:bg-primary-400 center-center`,
+    "primary": `bg-primary-500 text-white hover:bg-primary-600 center-center`,
     "success": `bg-success-500 text-success-contrast-500 hover:bg-success-400 `,
     "danger": `bg-danger-500 text-white hover:bg-danger-400 `,
     "accent": `bg-accent-500 text-white hover:bg-accent-400 `
@@ -47,8 +47,7 @@ export class ButtonDirective {
     this._el.nativeElement.innerText = ""
     
     const newElem = this._render2.createElement('div')
-    this.addClasses(newElem, "w-full flex justify-center letter-spacing font-normal")
-    
+    this.addClasses(newElem, "w-full flex justify-center font-normal px-2")
     
     const text = this._render2.createText(content)
     this._render2.appendChild(newElem, text)

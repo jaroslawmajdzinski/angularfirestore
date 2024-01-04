@@ -1,0 +1,32 @@
+<div class="w-full flex justify-center">
+  <div class="md:w-[400px] w-full pb-4">
+    
+    <div class="flex items-center justify-around">
+      <img
+        width="100px"
+        src="./assets/images/folder-data-storage-svgrepo-com.svg"
+      />
+
+      <h2 class="py-2 px-4 text-primary-500 border-primary-400 border-b-[1px]">
+        {{ title }}
+      </h2>
+      
+    </div>
+    
+    <div class="my-8 text-justify leading-7">
+        If you want to benefit all functionality of your 
+        storage, you should verify your account first. 
+        We have sent verification email with activation link already. Please check your mailbox.
+    </div>
+    
+    <div><button class="w-[250px]" (click)="resendEmail()" appButton="primary"> Resend verification email. </button></div>
+    
+    <div class="mt-10">
+      <button mat-stroked-button class="flex items-center cursor-pointer" routerLink="/login">
+        <mat-icon class="hover:text-slate-600">arrow_back</mat-icon>
+        back to login page
+      </button>
+    </div>
+  
+  </div>
+</div>

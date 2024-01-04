@@ -1,11 +1,13 @@
-<mat-toolbar color="primary" class="shadow-md">
-    <div class="toolbar" >
-        <button mat-icon-button color="primary" class="button" (click)="sideNavToggle.emit()">
-            <mat-icon>menu</mat-icon>
-        </button>
-        <app-navmenu place="toolbar"/>
-    
+<mat-toolbar color="primary" class="toolbar-height text-white shadow-md">
+  <img width="50px" src="./assets/images/folder-data-storage-svgrepo-com.svg" />
+  <div class="title-shadow mx-4 text-white">WebStorage</div>
+
+  <div class="toolbar">
+    <app-navmenu class="hidden sm:block" place="toolbar"/>
 </div>
-    
+
+<div class="button" (click)="sideNavToggle.emit()">
+    <span class="text-[14px] fi-menu"></span>
+</div>
 
 </mat-toolbar>

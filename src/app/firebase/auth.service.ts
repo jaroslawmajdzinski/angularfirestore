@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { MatDialog } from '@angular/material/dialog';
 import {  Router } from '@angular/router';
-import { BehaviorSubject, exhaustMap, tap, of } from 'rxjs';
+import { BehaviorSubject, exhaustMap, tap, of, from, concatMap, map, EMPTY } from 'rxjs';
 
 
 @Injectable({
@@ -16,13 +16,15 @@ export class AuthService {
 
     this._afAuth.authState.pipe(
       tap(user=>{
-        //console.log('start', user)
+        //console.log('start', user)  
         if(user){
-         localStorage.setItem('userData', JSON.stringify(user))
-          
-          this._user$.next(user)
-          this._router.navigate(['/files'])
-        
+          localStorage.setItem('userData', JSON.stringify(user))
+        if(user.emailVerified){  
+            this._user$.next(user)
+           this._router.navigate(['/files'])
+        } else{
+          //this._router.navigate(['/verify'])
+        }
         } else {
           localStorage.removeItem('userData')
           this._user$.next(null)
@@ -36,17 +38,17 @@ export class AuthService {
    
 
    signIn(email: string, password: string){
-    return this._afAuth.signInWithEmailAndPassword(email, password).then(result=>{
-      this.sendVeryficationMail();
-    })
+    return from(this._afAuth.signInWithEmailAndPassword(email, password)).pipe(
+      map(result=>result.user)
+    )
    }
 
    sendVeryficationMail(){
-     return this._afAuth.currentUser
+     return from(this._afAuth.currentUser
         .then(u=>u?.sendEmailVerification())
         .then(_=>{
 
-        })
+        }))
       }
 
    forgotPassword(email: string){
@@ -58,9 +60,15 @@ export class AuthService {
    }    
 
    signUp(email: string, password: string){
-    return this._afAuth.createUserWithEmailAndPassword(email, password).then()
-   }
-
+    return from(this._afAuth.createUserWithEmailAndPassword(email, password)).pipe(
+      concatMap(res=>{
+        if(res.user) return this.sendVeryficationMail().pipe(map(_=>res.user))
+        return of(null)
+      })
+    )
+      
+    }
+    
    logout(){
     this._afAuth.signOut().then(()=>{
       
@@ -71,18 +79,6 @@ export class AuthService {
     return this._user$
    }
 
-   isLoggedIn$(){
-    return this._user$.pipe(
-      exhaustMap(user=>{
-        if(user){
-          return of(true)
-        }else{
-          return of(false)
-        }
-       
-      })
-    )
-   }
-
+   
 }
 
