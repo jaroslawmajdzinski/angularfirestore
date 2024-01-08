@@ -1,7 +1,7 @@
-<div class="flex flex-col">
+<div class="flex flex-col" *ngIf="place==='toolbar';else side">
 
-  <div class="flex justify-end items-center">  
-    <app-colormode/>
+  <div class="flex justify-end items-end h-[65px]">  
+    <app-colormode [onSide]="onSide"/>
     <ul [class]="'menu_' + place">
   
     <li *ngIf="isLogged"><a routerLink="/files" routerLinkActive="button-active" class="button" mat-button>Files managemend</a></li>
@@ -22,8 +22,30 @@
 
   </ul>
 </div>
-
-
-<div class="flex justify-end items-center  h-[15px] text-white text-xs font-normal font-sans ">{{userEmail}}</div>
+  <div class="flex justify-end items-start  text-white text-xs font-normal font-sans ">{{userEmail}}</div>
 </div>
 
+<ng-template #side>
+ <div class="text-primary-500 dark:text-contrast mt-6"> 
+  <app-colormode [onSide]="onSide"/>
+    <ul [class]="'menu_' + place">
+  
+    <li *ngIf="isLogged"><a routerLink="/files" routerLinkActive="button-active" class="button" mat-button>Files managemend</a></li>
+
+    <ng-container *ngIf="!isLogged;else login">
+       <li>
+          <a routerLink="/login" routerLinkActive="button-active"  class="button" mat-button>Login</a>
+      </li>
+      <li><a routerLink="/register" routerLinkActive="button-active" class="button" mat-button>Register</a></li>
+    </ng-container>
+
+    <ng-template #login>
+      <li><a (click)="auth.logout()" color="primary" routerLinkActive="button-active" class="button logout" mat-button>
+        <mat-icon>logout</mat-icon>
+        Logut
+    </a></li>
+   </ng-template>
+
+  </ul>
+</div>
+</ng-template>

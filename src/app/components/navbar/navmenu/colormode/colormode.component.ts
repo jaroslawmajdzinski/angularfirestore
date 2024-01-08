@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
+import { ExpandComponent } from 'src/app/components/uielements/expand/expand.component';
 import { IOneTailwindTheme, ITailwindTheme } from 'src/app/theme.service/theme.interfaces';
 import { TailwindThemeService } from 'src/app/theme.service/theme.service';
 
@@ -8,6 +10,10 @@ import { TailwindThemeService } from 'src/app/theme.service/theme.service';
   styleUrls: ['./colormode.component.scss']
 })
 export class ColormodeComponent {
+
+  @Input()onSide!: boolean
+
+  @ViewChild('expand')accordion!: ExpandComponent
 
   icon = "light_mode"
    constructor(public themeService: TailwindThemeService){}
@@ -19,11 +25,11 @@ export class ColormodeComponent {
   changeMode(){
     this.themeService.toogleColorMode()
     this.icon = this.themeService.getCurrThemeNameAndMode().mode + "_mode"
-  }
+   }
 
-  selectTheme(ev: Event){
-    console.log(ev.target as HTMLInputElement)
-    this.themeService.selectTheme(parseInt((ev.target as HTMLInputElement).value))
+  selectTheme(idx: number){
+    this.themeService.selectTheme(idx)
+    this.accordion.contentVisible = false
   }
 
 }

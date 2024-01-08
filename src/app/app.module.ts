@@ -38,6 +38,10 @@ import { VerifyaccountComponent } from './components/verifyaccount/verifyaccount
 import { FormComponent } from './components/forms/form/form.component';
 import { InputComponent } from './components/uielements/input/input.component';
 import { ColormodeComponent } from './components/navbar/navmenu/colormode/colormode.component';
+import { ExpandComponent } from './components/uielements/expand/expand.component';
+import { SmothHeightComponent } from './components/uielements/smothheight/smothheight.component';
+import { SelectComponent } from './components/uielements/select/select.component';
+
 
 
 
@@ -70,8 +74,10 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     FormComponent,
     InputComponent,
     ColormodeComponent,
-   
-  ],
+    ExpandComponent,
+    SmothHeightComponent,
+    SelectComponent,
+    ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

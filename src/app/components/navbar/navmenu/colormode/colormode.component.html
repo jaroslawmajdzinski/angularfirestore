@@ -1,5 +1,6 @@
-<div class="flex items-center mt-4 mr-3">
-<div class="p-4">
+<div *ngIf="!onSide;else side" class="flex items-end mt-4 mr-3">
+
+  <div class="mr-4">
   <mat-icon
     (click)="changeMode()"
     class="hover:opacity-60 transition-all duration-200"
@@ -12,9 +13,38 @@
 </div>
 <mat-menu #themes="matMenu">
   <button mat-menu-item *ngFor="let theme of themeService.getThemesList(); let idx = index">
-    <mat-radio-button color="primary" (click)="selectTheme($event)" [checked]="theme.name===themeService.getCurrThemeNameAndMode().name" [value]="idx">
+    <app-select  (click)="selectTheme(idx)" [selected]="theme.name===themeService.getCurrThemeNameAndMode().name">
      {{ theme.name }}
-  </mat-radio-button>  
+    </app-select>  
   </button>
 </mat-menu>
+
 </div>
+
+<ng-template #side>
+<div  class="flex flex-col justify-start">
+
+  <div class="mr-4 my-2">
+  <mat-icon
+    (click)="changeMode()"
+    class="hover:opacity-60 transition-all duration-200"
+    >{{ icon }}</mat-icon
+  >
+</div>
+
+
+<app-expand #expand>
+  
+    <mat-icon expand-header class="hover:opacity-60 transition-all duration-200">format_color_fill</mat-icon>
+  
+ <ng-container expand-content>
+  <button mat-menu-item *ngFor="let theme of themeService.getThemesList(); let idx = index">
+    <app-select (click)="selectTheme(idx)" [selected]="theme.name===themeService.getCurrThemeNameAndMode().name">
+     {{ theme.name }}
+    </app-select>
+  </button>
+</ng-container>
+</app-expand>
+
+</div>
+</ng-template>

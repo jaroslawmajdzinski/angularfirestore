@@ -1,0 +1,9 @@
+<div (click)="contentVisible=!contentVisible" class="flex justify-between p-2 mb-3 bg-white/5 rounded-md">
+    <ng-content select="[expand-header]"></ng-content>
+    <mat-icon class="transition-all duration-300" [ngClass]="{'rotate-180': contentVisible}">keyboard_arrow_down</mat-icon>
+</div>
+<app-smothheight [trigger]="contentVisible" *ngIf="contentVisible">
+<div class="bg-white/5 rounded-md ml-2">
+    <ng-content select="[expand-content]"></ng-content>
+</div>
+</app-smothheight>

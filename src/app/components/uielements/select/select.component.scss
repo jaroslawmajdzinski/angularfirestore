@@ -1,0 +1,17 @@
+.select{
+    @apply flex text-contrast;
+    &:has(:hover){
+        .icon{
+            @apply opacity-100; 
+        }
+    }
+    &:hover .icon{
+        @apply opacity-100;
+    }
+    .icon{
+        @apply opacity-0 transition-all duration-200 text-contrast;
+    }
+    & .selected{
+        @apply opacity-100;
+    }
+}

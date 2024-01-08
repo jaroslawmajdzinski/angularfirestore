@@ -2,7 +2,7 @@
     @apply w-full;
 }
 .menu_toolbar{
-    @apply flex items-center justify-end text-white invisible sm:visible mt-4;
+    @apply flex items-center justify-end text-white invisible sm:visible;
     li{
         @apply p-1;
         .button-active{

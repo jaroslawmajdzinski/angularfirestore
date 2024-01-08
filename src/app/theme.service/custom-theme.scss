@@ -127,6 +127,7 @@ $warn-palette: (
   @include mat.progress-bar-theme($custom-theme);
   @include mat.menu-theme($custom-theme);
   @include mat.radio-theme($custom-theme);
+  @include mat.expansion-theme($custom-theme);
 }
 
 @mixin scrollbar($isDark){
@@ -210,6 +211,10 @@ $warn-palette: (
 
 .mat-mdc-radio-button .mdc-form-field {
   color: var(--primary-700);
+}
+
+.mat-expansion-panel{
+  color: var(--primary-500);
 }
 
 }

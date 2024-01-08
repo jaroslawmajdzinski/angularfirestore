@@ -9,7 +9,18 @@ import { AuthService } from 'src/app/firebase/auth.service';
 })
 export class NavmenuComponent {
  
-  @Input()place: "toolbar" | "side" = "toolbar"
+  private _place: "toolbar" | "side" = "toolbar"
+  onSide = false
+
+  @Input()  
+  set place(val: "toolbar" | "side"){
+    this._place = val
+    this.onSide = val==="side"? true : false
+  }
+
+  get place(){
+    return this._place
+  }
 
   colorMode = "light"
   
