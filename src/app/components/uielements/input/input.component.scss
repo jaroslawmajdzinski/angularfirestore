@@ -1,10 +1,10 @@
 .container{
-    @apply flex items-center outline-none shadow-sm rounded-[3px] bg-transparent border-primary-100  border-[2px];
+    @apply flex items-center outline-none shadow-sm rounded-[3px] bg-transparent border-primary-100  border-[2px] transition-all duration-500;
     &:focus-within{
         @apply border-primary-400;
     }
     &:has(.ng-invalid.ng-touched){
-        @apply border-danger-300;
+        @apply focus:border-danger-300 border-danger-200;
     }
     & > input{
         @apply outline-none 

@@ -18,3 +18,11 @@ export interface IColor {
     'background': string;
     'background-contrast': string;
     }
+
+    export interface IOneTailwindTheme{
+      name: string;
+      isDarkTheme: boolean;
+      colors: ITailwindTheme
+    }
+
+  

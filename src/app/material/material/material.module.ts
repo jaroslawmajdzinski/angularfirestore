@@ -10,6 +10,8 @@ import {MatListModule} from '@angular/material/list'
 import {MatProgressBarModule} from '@angular/material/progress-bar'
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [],
@@ -25,7 +27,9 @@ import {MatCardModule} from '@angular/material/card';
     MatProgressBarModule,
     MatGridListModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule,
+    MatRadioModule
    ],exports:[
     MatDialogModule,
     MatInputModule,
@@ -37,8 +41,10 @@ import {MatCardModule} from '@angular/material/card';
     MatProgressBarModule,
     MatGridListModule,
     MatCardModule,
-    MatIconModule
-   
+    MatIconModule,
+    MatMenuModule,
+    MatRadioModule
+    
   ]
 })
 export class MaterialModule { }

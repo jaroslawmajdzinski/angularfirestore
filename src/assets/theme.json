@@ -1,9 +1,13 @@
+[
 {
+"name": "default",
+"isDarkTheme": false,
+"colors": {
     "primary": "#3f51b5",
     "primary-contrast": "#FFFFFF",
     "secondary": "#2d6ca3", 
     "secondary-contrast":"#FFFFFF",
-    "accent":"#F9C80E",
+    "accent":"#c2185b",
     "accent-contrast": "#000000",
     "danger":"#EA3546",
     "danger-contrast": "#ffffff",
@@ -12,3 +16,23 @@
     "background": "#192F4E",
     "background-contrast": "#ffffff"
 }
+},
+{
+    "name": "second",
+    "isDarkTheme": false,
+    "colors": {
+        "primary": "#832282",
+        "primary-contrast": "#FFFFFF",
+        "secondary": "#647240", 
+        "secondary-contrast":"#FFFFFF",
+        "accent":"#647240",
+        "accent-contrast": "#000000",
+        "danger":"#EA3546",
+        "danger-contrast": "#ffffff",
+        "success": "#6B25F7",
+        "success-contrast": "#FFFFFF",
+        "background": "#5c5c5c",
+        "background-contrast": "#ffffff"
+    }
+    }
+]

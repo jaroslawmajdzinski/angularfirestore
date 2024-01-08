@@ -3,13 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 @import './app/theme.service/custom-theme.scss';
 
 @import './assets/font/css/open-iconic-foundation.min.css';
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-
+.mat-app-background {
+  @apply bg-primary-300;
+} 
 
 .mat-mdc-form-field-focus-overlay {
     background-color: transparent !important;
@@ -18,9 +22,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-raised-button.mat-primary {
     --mdc-protected-button-container-color: var(--primary-500);
     --mdc-protected-button-label-text-color: var(--primary-contrast-500);
-}  
-
-.mat-toolbar.mat-primary {
-    --mat-toolbar-container-background-color: var(--primary-500);
-    --mat-toolbar-container-text-color: var(--primary-contrast-500);
 }
+
+.mat-mdc-raised-button.mat-accent {
+  --mdc-protected-button-container-color: var(--accent-500);
+  --mdc-protected-button-label-text-color: white;
+}
+
+

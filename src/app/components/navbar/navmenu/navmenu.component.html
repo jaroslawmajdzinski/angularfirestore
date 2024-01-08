@@ -1,6 +1,8 @@
+<div class="flex flex-col">
 
-  
-  <ul [class]="'menu_' + place">
+  <div class="flex justify-end items-center">  
+    <app-colormode/>
+    <ul [class]="'menu_' + place">
   
     <li *ngIf="isLogged"><a routerLink="/files" routerLinkActive="button-active" class="button" mat-button>Files managemend</a></li>
 
@@ -19,7 +21,9 @@
    </ng-template>
 
   </ul>
+</div>
+
 
 <div class="flex justify-end items-center  h-[15px] text-white text-xs font-normal font-sans ">{{userEmail}}</div>
-
+</div>
 

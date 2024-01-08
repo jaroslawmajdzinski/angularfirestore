@@ -37,6 +37,7 @@ import { InputRefDirective } from './components/uielements/input_password/input-
 import { VerifyaccountComponent } from './components/verifyaccount/verifyaccount.component';
 import { FormComponent } from './components/forms/form/form.component';
 import { InputComponent } from './components/uielements/input/input.component';
+import { ColormodeComponent } from './components/navbar/navmenu/colormode/colormode.component';
 
 
 
@@ -68,6 +69,7 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     VerifyaccountComponent,
     FormComponent,
     InputComponent,
+    ColormodeComponent,
    
   ],
   imports: [

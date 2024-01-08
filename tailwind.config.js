@@ -3,9 +3,12 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
    ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        "background": 'var(--background-color)',
+         "contrast": 'var(--background-contrast)',
         'primary': {
           DEFAULT: 'var(--primary-500)',
           50: 'var(--primary-50)',
@@ -20,17 +23,17 @@ module.exports = {
           900: 'var(--primary-900)',
         },
         'primary-contrast': {
-          DEFAULT: 'var(--primary-color-500)',
-          50: 'var(--primary-contrast-50)',
-          100: 'var(--primary-contrast-100)',
-          200: 'var(--primary-contrast-200)',
-          300: 'var(--primary-contrast-300)',
-          400: 'var(--primary-contrast-400)',
-          500: 'var(--primary-contrast-500)',
-          600: 'var(--primary-contrast-600)',
-          700: 'var(--primary-contrast-700)',
-          800: 'var(--primary-contrast-800)',
-          900: 'var(--primary-contrast-900)',
+          DEFAULT: 'rgba(var(--primary-color-500), <alpha-value>)',
+          50: 'rgba(var(--primary-contrast-50), <alpha-value>)',
+          100: 'rgba(var(--primary-contrast-100), <alpha-value>)',
+          200: 'rgba(var(--primary-contrast-200), <alpha-value>)',
+          300: 'rgba(var(--primary-contrast-300), <alpha-value>)',
+          400: 'rgba(var(--primary-contrast-400), <alpha-value>)',
+          500: 'rgba(var(--primary-contrast-500), <alpha-value>)',
+          600: 'rgba(var(--primary-contrast-600), <alpha-value>)',
+          700: 'rgba(var(--primary-contrast-700), <alpha-value>)',
+          800: 'rgba(var(--primary-contrast-800), <alpha-value>)',
+          900: 'rgba(var(--primary-contrast-900), <alpha-value>)',
         },
         'secondary': {
           DEFAULT: 'var(--secondary-500)',

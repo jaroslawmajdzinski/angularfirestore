@@ -1,3 +1,7 @@
 .sidenav{
     height: calc(100vh - 40px);
+    
+}
+.sidenav-background{
+    @apply dark:bg-primary-800;
 }

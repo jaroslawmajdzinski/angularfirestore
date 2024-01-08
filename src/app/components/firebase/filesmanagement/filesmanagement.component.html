@@ -1,8 +1,8 @@
 <mat-card-header class="header">
-  <h2 class="text-primary-600">Your storage</h2></mat-card-header
+  <h2 class="text-primary-600 dark:text-primary-50">Your storage</h2></mat-card-header
 >
 <mat-drawer-container class="overflow-hidden rounded-b-lg">
-  <mat-drawer class="w-[250px]" position="end" #drawer>
+  <mat-drawer class="w-[250px] drawer-background" position="end" #drawer>
     <app-fileinfo
       (close)="drawer.close()"
       [fileMetadata]="fileMetadata"
@@ -10,7 +10,7 @@
   </mat-drawer>
 
   <mat-drawer-content class="content">
-      <div class="flex justify-between items-center text-primary-700 text-lg bg-slate-100">
+      <div class="flex justify-between items-center text-primary-700 dark:text-contrast dark:bg-primary-400 text-lg bg-slate-100">
       <!--curr path-->
       <div>
         <app-path />
@@ -21,7 +21,7 @@
         <div class="flex justify-end">
           <span (click)="createDirctory()" class="pr-4 p-2">
             <mat-icon
-              class="text-primary-500 hover:text-primary-400 cursor-pointer transition-all duration-150"
+              class="text-primary-500 dark:text-primary-50 dark:hover:text-primary-300 hover:text-primary-400 cursor-pointer transition-all duration-150"
               >create_new_folder</mat-icon
             >
           </span>
@@ -31,7 +31,7 @@
 
       <!--header-->
       <table class="table-fixed w-full border-separate border-spacing-y-[2px] text-primary-700">
-        <thead class="bg-primary-500 text-white h-[45px]">
+        <thead class="bg-primary-700 text-white h-[45px]">
           <th class="p-2 w-[40px]">
             <input
               (click)="selectAllHandler($event)"
@@ -74,8 +74,8 @@
       
         <div [ngStyle]="{'top': top(idx) }" class="grid grid-cols-10 h-[40px] w-full absolute transition-all duration-300"
             [ngClass]="{
-            'bg-primary-50': !item.selected,
-            'bg-primary-100': item.selected
+            'bg-normal': !item.selected,
+            'bg-selected': item.selected
           }"
            
             *ngFor="let item of filesList; let idx = index; trackBy: trackByFn"
@@ -125,7 +125,7 @@
                 (click)="deleteOneHandler(idx)"
               >
                 <mat-icon
-                  class="text-primary-500 hover:text-primary-300 cursor-pointer transition-all duration-150"
+                  class="text-primary-500 dark:text-primary-100 dark:hover:text-primary-300 hover:text-primary-300 cursor-pointer transition-all duration-150"
                   *ngIf="item.fullPath!=='..'"
                   >delete</mat-icon
                 >

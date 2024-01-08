@@ -1,12 +1,12 @@
 <div class="flex flex-col rounded-sm rounded-t overflow-hidden">
-  <div class="flex justify-between items-center p-4 bg-primary-100">
-    <div class="text-primary-600 font-medium text-xl p-0">Files to upload</div>
+  <div class="flex justify-between items-center p-4 bg-primary-100 dark:bg-primary-700">
+    <div class="text-primary-600 dark:text-primary-50 font-medium text-xl p-0">Files to upload</div>
     <button (click)="fileInput.click()" mat-flat-button>Chose files</button>
   </div>
 
-  <table class="table-fixed w-full border-separate border-spacing-y-1">
+  <table class="table-fixed w-full border-separate border-spacing-y-[2px]">
     <thead
-      class="bg-primary-500 text-white h-[45px]"
+      class="bg-primary-500 dark:bg-primary-700 text-white h-[45px]"
       @tableHeader
       *ngIf="fileList.length || filesInProgress.length"
     >
@@ -45,8 +45,9 @@
     [@newElement]="fileList.length"
   >
     <div
-      [ngStyle]="{ top: top(idx) }"
-      class="absolute bg-primary-50 grid grid-cols-10 h-[32px] w-full"
+      [ngStyle]="{ top: top(idx)}"
+      [ngClass]="{'bg-normal': !item.selected, 'bg-selected': item.selected}"
+      class="absolute grid grid-cols-10 h-[40px] w-full"
       *ngFor="let item of fileList; let idx = index; trackBy: trackByFn"
     >
   
@@ -75,7 +76,7 @@
   </div>
 
   <div
-    class="relative bg-primary-200 text-white h-[32px] flex items-center pl-4"
+    class="relative bg-primary-200 dark:bg-primary-400 text-white h-[40px] flex items-center pl-4"
     *ngIf="filesInProgress.length"
   >
     Inprogress
@@ -89,7 +90,7 @@
     <ng-container *ngFor="let item of filesInProgress; let idx = index">
       <div
       [ngStyle]="{ top: top(idx) }"
-        class="absolute grid grid-cols-10 bg-primary-100 w-full h-[32px]"
+        class="absolute grid grid-cols-10 bg-primary-100 dark:bg-primary-700 w-full h-[32px]"
        
       >
         <div class="p-2 pl-3"></div>

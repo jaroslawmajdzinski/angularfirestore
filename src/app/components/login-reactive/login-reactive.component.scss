@@ -1,33 +1,34 @@
-.input{
-    @apply outline-none shadow-sm rounded-[3px] bg-transparent border-primary-100 p-1 focus:border-primary-400 border-[2px];
+.input {
+    @apply outline-none shadow-sm rounded-[3px] dark:text-contrast bg-transparent border-primary-100 p-1 focus:border-primary-400 border-[2px];
 }
-.ng-invalid.ng-touched{
+
+.ng-invalid.ng-touched {
     @apply border-danger-300;
 }
-.field{
+
+.field {
     @apply text-xs p-0;
     --mdc-filled-text-field-container-color: transparent;
 }
 
-input::placeholder{
+input::placeholder {
     @apply text-transparent;
 }
 
-.input-field:has(.ng-dirty.ng-touched){
-    .top{
+.input-field:has(.ng-dirty.ng-touched) {
+    .top {
         @apply top-[-20px] left-[-5px];
     }
 }
-.input-field{
-    .top{
+
+.input-field {
+    .top {
         @apply top-[5px] left-[5px] transition-all duration-200 text-primary-700;
     }
 }
 
-.input-field:focus-within{
-    .top{
+.input-field:focus-within {
+    .top {
         @apply top-[-20px] left-[-5px];
     }
 }
-
- 

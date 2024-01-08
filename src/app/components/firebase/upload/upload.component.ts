@@ -109,11 +109,11 @@ export class UploadComponent {
     }
 
     top(index: number){
-      return `${index * (32 + 2)}px`
+      return `${index * (40 + 2)}px`
     }
   
     heightList(){
-      return `${this.fileList.length * 34}px`
+      return `${this.fileList.length * 44}px`
     }  
 
     listInProgressLength(){

@@ -11,6 +11,7 @@ export class NavmenuComponent {
  
   @Input()place: "toolbar" | "side" = "toolbar"
 
+  colorMode = "light"
   
   private _sub!: Subscription
   isLogged = false
@@ -36,4 +37,12 @@ export class NavmenuComponent {
   ngOnDestroy(){
     this._sub.unsubscribe()
   }
+
+onColorModeClick(){
+  document.body.classList.remove(this.colorMode)
+  this.colorMode = this.colorMode==="dark"? "light" : "dark"
+  document.body.classList.add(this.colorMode)
 }
+
+}
+

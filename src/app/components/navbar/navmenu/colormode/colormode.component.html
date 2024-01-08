@@ -1,0 +1,20 @@
+<div class="flex items-center mt-4 mr-3">
+<div class="p-4">
+  <mat-icon
+    (click)="changeMode()"
+    class="hover:opacity-60 transition-all duration-200"
+    >{{ icon }}</mat-icon
+  >
+</div>
+
+<div mat-button [matMenuTriggerFor]="themes">
+  <mat-icon class="hover:opacity-60 transition-all duration-200">format_color_fill</mat-icon>
+</div>
+<mat-menu #themes="matMenu">
+  <button mat-menu-item *ngFor="let theme of themeService.getThemesList(); let idx = index">
+    <mat-radio-button color="primary" (click)="selectTheme($event)" [checked]="theme.name===themeService.getCurrThemeNameAndMode().name" [value]="idx">
+     {{ theme.name }}
+  </mat-radio-button>  
+  </button>
+</mat-menu>
+</div>
