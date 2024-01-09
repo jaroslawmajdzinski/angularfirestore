@@ -31,7 +31,7 @@
 
       <!--header-->
       <table class="table-fixed w-full border-separate border-spacing-y-[2px] text-primary-700">
-        <thead class="bg-primary-700 text-white h-[45px]">
+        <thead class="bg-primary-700 text-white h-[55px]">
           <th class="p-2 w-[40px]">
             <input
               (click)="selectAllHandler($event)"
@@ -57,7 +57,7 @@
               </button>
 
               <button
-                (click)="deleteHandler()"
+                (click)="deleteFileHandler()"
                 mat-flat-button
                 color="warn"
                 class="button"
@@ -72,7 +72,7 @@
 
       <div class="relative flex flex-col transition-all duration-150" [@newElement]="filesList.length"  [ngStyle]="{'height': height()}">
       
-        <div [ngStyle]="{'top': top(idx) }" class="grid grid-cols-10 h-[40px] w-full absolute transition-all duration-300"
+        <div [ngStyle]="{'top': top(idx) }" class="grid grid-cols-12 h-[50px] w-full absolute transition-all duration-300"
             [ngClass]="{
             'bg-normal': !item.selected,
             'bg-selected': item.selected
@@ -81,7 +81,7 @@
             *ngFor="let item of filesList; let idx = index; trackBy: trackByFn"
         >
           
-            <div class="p-2 pl-3">
+            <div class="flex justify-center items-center">
               <input
                 [checked]="item.selected"
                 (click)="selectOneHandler($event, idx)"
@@ -90,9 +90,12 @@
               />
             </div>
           
-            <div class="col-span-5 flex items-center">
+            <div  class="col-span-1">
+              <app-thumbnail [thumbPathAndName]="item.thumbFullPath"/>
+            </div>
+            <div class="col-span-6 flex justify-start items-center pl-4">
                 <div
-                  class="cursor-pointer w-full"
+                  class="cursor-pointer w-full "
                   (click)="openDirectory(idx)"
                   *ngIf="item.isDirectory; else file"
                 >
@@ -110,19 +113,23 @@
               </ng-template>
             </div>
             
-            <div class="col-span-3 flex items-center">
+            <div class="col-span-3 flex flex-col pt-3">
+             <ng-container *ngIf="item.selected || item.loaded">
               <mat-progress-bar
                 class="my-progress-bar"
                 [value]="item.progress"
                 mode="determinate"
                 @progress
-                *ngIf="item.selected || item.loaded"
+                
               ></mat-progress-bar>
+              <div class="dark:text-primary-50 text-xs w-full" *ngIf="item.progress" >downloaded...{{item.progress}}%</div>
+            </ng-container>
             </div>
+            
             <div>
               <div
                 class="flex justify-end items-center h-full pr-3"
-                (click)="deleteOneHandler(idx)"
+                (click)="deleteOneFileHandler(idx)"
               >
                 <mat-icon
                   class="text-primary-500 dark:text-primary-100 dark:hover:text-primary-300 hover:text-primary-300 cursor-pointer transition-all duration-150"

@@ -10,11 +10,13 @@ import {
   Subscription,
   catchError,
   combineLatestWith,
+  concat,
   concatMap,
   delay,
   exhaustMap,
   filter,
   forkJoin,
+  mergeMap,
   take,
   tap,
 } from 'rxjs';
@@ -108,6 +110,10 @@ export class FilesmanagementComponent implements OnInit {
         tap(([newFile, path]) => {
           console.log(newFile.uploadPath, path)
           if (newFile.uploadPath === path) {
+            const idx = this.filesList.findIndex(item=>item.name===newFile.name)
+            if(idx>-1){
+              this.filesList.splice(idx,1)
+            }
             this.filesList.unshift(newFile);
             this.filesList = [...this.filesList];
           }
@@ -118,11 +124,11 @@ export class FilesmanagementComponent implements OnInit {
   }
 
   top(index: number){
-    return `${index * (40 + 2)}px`
+    return `${index * (50 + 2)}px`
   }
 
   height(){
-    return `${this.filesList.length * 42}px`
+    return `${this.filesList.length * 52}px`
   }
 
   ngOnDestroy() {
@@ -220,7 +226,7 @@ export class FilesmanagementComponent implements OnInit {
       .subscribe();
   }
 
-  deleteOneHandler(idx: number) {
+  deleteOneFileHandler(idx: number) {
     if (this.filesList[idx].isDirectory) {
       this.deleteDirectory(idx);
       return;
@@ -235,8 +241,16 @@ export class FilesmanagementComponent implements OnInit {
     })
       .pipe(
         filter((res) => res !== 'dismiss' && res !== undefined),
-        concatMap(() =>
-          this._storageService.deleteFile(this.filesList[idx].fullPath)
+        concatMap(() =>{
+          const thumbPath = this.filesList[idx].thumbFullPath || ""
+          if(thumbPath.length>0){
+            return this._storageService.deleteFile(thumbPath)
+          .pipe(
+              concatMap(_=>this._storageService.deleteFile(this.filesList[idx].fullPath))
+          )
+         }
+          return this._storageService.deleteFile(this.filesList[idx].fullPath)
+        }
         ),
         tap(() => this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
@@ -244,7 +258,7 @@ export class FilesmanagementComponent implements OnInit {
       .subscribe();
   }
 
-  deleteHandler() {
+  deleteFileHandler() {
     this.dialog({
       title: 'Question',
       message: `Do you want to delet selected files?`,
@@ -259,7 +273,13 @@ export class FilesmanagementComponent implements OnInit {
           forkJoin(
             this.filesList
               .filter((item) => item.selected && !item.isDirectory)
-              .map((item) => this._storageService.deleteFile(item.fullPath))
+              .map((item) =>{
+                const thumbPath = item.thumbFullPath || ""
+               if(thumbPath.length>0){
+                return concat(this._storageService.deleteFile(item.fullPath), this._storageService.deleteFile(thumbPath) )
+               }
+                return  this._storageService.deleteFile(item.fullPath)
+              })
           ).pipe(
             tap(() => this._managementServise.emitCurrPath()),
             catchError(this.errorHandler)

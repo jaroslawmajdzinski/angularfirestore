@@ -34,7 +34,6 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2, region: "europe-west6"}, 
     // Generate a thumbnail using sharp.
     const thumbnailBuffer = await sharp(imageBuffer).resize({
       width: 200,
-      height: 200,
       withoutEnlargement: true,
     }).toBuffer();
     logger.log("Thumbnail created");

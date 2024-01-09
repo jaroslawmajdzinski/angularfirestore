@@ -13,7 +13,7 @@ import {
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
-import {  TFileList, TUploadFilesList } from '../management/filesmanagement.types';
+import {  TFileList, TUploadFilesList, isUploadSnapshot } from '../management/filesmanagement.types';
 import { ManagementService } from '../management/management.service';
 import { animate, query, stagger,  style, transition, trigger } from '@angular/animations';
 import { UploadTaskSnapshot } from '@angular/fire/compat/storage/interfaces';
@@ -113,7 +113,7 @@ export class UploadComponent {
     }
   
     heightList(){
-      return `${this.fileList.length * 44}px`
+      return `${this.fileList.length * 42}px`
     }  
 
     listInProgressLength(){
@@ -121,7 +121,7 @@ export class UploadComponent {
     }
 
     heightListInProgress(){
-      return `${this.listInProgressLength() * 34}px`
+      return `${this.listInProgressLength() * 42}px`
     } 
 
   handleFileUpload() {
@@ -191,17 +191,16 @@ export class UploadComponent {
 
   
   uploadFile(item: TUploadFilesList){
+    
     return   this._uploadService
     .uploadFileToStorage(
-      item.file,
-      item.pathToUpload
+      item
     )
     .pipe(
-      scan((progress, curr: UploadTaskSnapshot | string) => {
-        if (typeof curr !== 'string') {
-          console.log(curr)
-          item.progress = Math.ceil((curr.bytesTransferred * 100) / curr.totalBytes)
-        } 
+      scan((progress, curr: UploadTaskSnapshot | string ) => {
+        if (typeof curr!=='string') {
+            item.progress = Math.ceil((curr.bytesTransferred * 100) / curr.totalBytes)
+        }
         return curr;
       }),
       tap(url=>{
@@ -213,8 +212,10 @@ export class UploadComponent {
           isDirectory: false,
           loaded: false,
           fullPath: url,
-          uploadPath: item.pathToUpload
-        });
+          uploadPath: item.pathToUpload,
+          thumbFullPath: item.file.type.includes('image')? this._uploadService.getUploadPath(item.pathToUpload) + "/thumb_" + item.file.name : ""
+          });
+          console.log('thumb', this._uploadService.getUploadPath(item.pathToUpload) + "/thumb_" + item.file.name )  
         const idx = this.filesInProgress.findIndex(item=>item.file.name===item.file.name)
         this.filesInProgress.splice(idx, 1)
       }

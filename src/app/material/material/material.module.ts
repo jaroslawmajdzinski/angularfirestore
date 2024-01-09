@@ -13,6 +13,8 @@ import {MatCardModule} from '@angular/material/card';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {OverlayModule} from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 
 @NgModule({
   declarations: [],
@@ -31,7 +33,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatIconModule,
     MatMenuModule,
     MatRadioModule,
-    MatExpansionModule
+    MatExpansionModule,
+    OverlayModule,
+    PortalModule
    ],exports:[
     MatDialogModule,
     MatInputModule,
@@ -46,7 +50,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatIconModule,
     MatMenuModule,
     MatRadioModule,
-    MatExpansionModule
+    MatExpansionModule,
+    OverlayModule,
+    PortalModule
     
   ]
 })

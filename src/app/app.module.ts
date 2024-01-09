@@ -41,6 +41,9 @@ import { ColormodeComponent } from './components/navbar/navmenu/colormode/colorm
 import { ExpandComponent } from './components/uielements/expand/expand.component';
 import { SmothHeightComponent } from './components/uielements/smothheight/smothheight.component';
 import { SelectComponent } from './components/uielements/select/select.component';
+import { ThumbDirective } from './components/firebase/filesmanagement/thumb.directive';
+import { ThumbnailComponent } from './components/firebase/management/thumbnail/thumbnail.component';
+import { ImagepreviewComponent } from './components/firebase/management/imagepreview/imagepreview.component';
 
 
 
@@ -77,6 +80,9 @@ function initializeAppFactory(themeService: TailwindThemeService): () => Observa
     ExpandComponent,
     SmothHeightComponent,
     SelectComponent,
+    ThumbDirective,
+    ThumbnailComponent,
+    ImagepreviewComponent,
     ],
   imports: [
     BrowserModule,

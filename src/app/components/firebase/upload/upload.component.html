@@ -6,7 +6,7 @@
 
   <table class="table-fixed w-full border-separate border-spacing-y-[2px]">
     <thead
-      class="bg-primary-500 dark:bg-primary-700 text-white h-[45px]"
+      class="bg-primary-500 dark:bg-primary-700 text-white h-[50px]"
       @tableHeader
       *ngIf="fileList.length || filesInProgress.length"
     >
@@ -31,7 +31,7 @@
             class="ml-2 mr-2"
             (click)="removeFilesHandler()"
           >
-            <mat-icon>delete</mat-icon
+            <mat-icon>cancel</mat-icon
             ><span class="hidden lg:inline"> Clear </span>
           </button>
         </div>
@@ -90,18 +90,21 @@
     <ng-container *ngFor="let item of filesInProgress; let idx = index">
       <div
       [ngStyle]="{ top: top(idx) }"
-        class="absolute grid grid-cols-10 bg-primary-100 dark:bg-primary-700 w-full h-[32px]"
+        class="absolute grid grid-cols-10 bg-primary-100 dark:bg-primary-700 w-full h-[40px]"
        
       >
         <div class="p-2 pl-3"></div>
         <div class="col-span-5 flex items-center">{{ item.file.name }}</div>
-        <div class="col-span-4 px-3 flex items-center">
+        <div class="col-span-4 px-3 pt-3 flex flex-col items-center">
+          <ng-container *ngIf="item.progress > 0; else wait">
           <mat-progress-bar
             class="my-progress-bar"
             [value]="item.progress"
             mode="determinate"
-            *ngIf="item.progress > 0; else wait"
+            
           ></mat-progress-bar>
+          <div class="dark:text-primary-50 text-xs w-full">downloaded...{{item.progress}}%</div>
+        </ng-container>  
 
           <ng-template #wait>
             <mat-progress-bar
