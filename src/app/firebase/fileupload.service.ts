@@ -18,6 +18,8 @@ import {
   switchMap,
   retry,
   timer,
+  merge,
+  scan,
 } from 'rxjs';
 import { User } from './models/user.model';
 import {
@@ -28,8 +30,12 @@ import {
   getMetadata,
   getDownloadURL,
 } from 'firebase/storage';
-import { TUploadFilesList } from '../components/firebase/management/filesmanagement.types';
+import { TFileList, TUploadFilesList } from '../components/firebase/management/filesmanagement.types';
 import { HttpClient } from '@angular/common/http';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { IFileData } from './models/file.model';
+import { UploadTaskSnapshot } from '@angular/fire/compat/storage/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +47,8 @@ export class FileuploadService {
   constructor(
     private _auth: AuthService,
     private _storage: AngularFireStorage,
-    private _httpClient: HttpClient
+    private _httpClient: HttpClient,
+    private _firebase: AngularFirestore
   ) {
     this._auth
       .getUserData$()
@@ -57,25 +64,56 @@ export class FileuploadService {
     return this._auth.getUserData$().pipe(
       filter((user) => user !== null),
       take(1),
-      exhaustMap((usr) => {
-        const filePath = `${this._rootPath}/${usr.uid}${
+      concatMap(usr=>{
+        const path = `${this._rootPath}/${usr.uid}${
           item.pathToUpload === '' ? '' : '/' + item.pathToUpload
-        }/${item.file.name}`;
-        const storageRef = this._storage.ref(filePath);
-        const uploadTask = this._storage.upload(filePath, item.file);
-        const fileUrl$ = storageRef.getDownloadURL();
-        return concat(uploadTask.snapshotChanges(), fileUrl$);
-      })
-    );
+        }/`
+        return this.saveFileInfoToDatabase(
+        {
+          name: item.file.name,
+          searchName: item.file.name.toLocaleLowerCase(),
+          pathInUserStorage: path,
+          type: item.file.type,
+          size: item.file.size,
+          uplodDate: new Date().toDateString()
+        }, usr.uid
+      ).pipe(
+        concatMap((id) => {
+          const pathWithName = `${path}${id}___${item.file.name}` 
+          const storageRef = this._storage.ref(pathWithName);
+          const uploadTask = this._storage.upload(pathWithName, item.file);
+          const fileUrl$ = storageRef.getDownloadURL();
+          return uploadTask.snapshotChanges()
+            .pipe(
+              scan((progress, curr: UploadTaskSnapshot | undefined) => {
+                if (curr!==undefined && curr.state!=="success") {
+                    item.progress = Math.ceil((curr.bytesTransferred * 100) / curr.totalBytes)
+                }
+                return curr;
+              }),
+              filter(curr=>curr?.state==="success"),
+              concatMap(_=>fileUrl$),
+              map(url=>(
+                {
+                 url: url, 
+                 fileName: `${id}___${item.file.name}`
+                })
+              ))
+            
+        })
+        )}),
+      
+    
+      );
   }
 
-  getUploadPath(pathToUpload: string){
-    if(this._user){
+  getUploadPath(pathToUpload: string) {
+    if (this._user) {
       return `${this._rootPath}/${this._user.uid}${
         pathToUpload === '' ? '' : '/' + pathToUpload
-      }`
+      }`;
     }
-    return ""
+    return '';
   }
 
   createDirectory(fullPath: string) {
@@ -138,7 +176,7 @@ export class FileuploadService {
                 const thumb =
                   thumbnails[itemRef.name as keyof typeof thumbnails];
                 return {
-                  name: itemRef.name,
+                  name: itemRef.name.split('___')[1],
                   fullPath: itemRef.fullPath,
                   isDirectory: false,
                   thumbFullPath: thumb ? thumb.path : '',
@@ -177,10 +215,26 @@ export class FileuploadService {
     );
   }
 
-  deleteFile(fullPath: string) {
-    const fileRef = ref(this._storage.storage, fullPath);
-    return from(deleteObject(fileRef));
-  }
+  deleteFile(item: TFileList) {
+   const pathAndName =  item.fullPath
+   const uid = this._user?.uid || ""
+         console.log('path', pathAndName, 'thumb', item.thumbFullPath)
+          
+          const thumbPath = item.thumbFullPath || ""
+          const fileRef = ref(this._storage.storage, `${pathAndName}`);
+          if(thumbPath.length>0){
+            const  thumbRef = ref(this._storage.storage, `${item.thumbFullPath}`)
+            return merge(
+              from(deleteObject(fileRef)),
+              from(deleteObject(thumbRef))
+            ).pipe(
+              concatMap(_=>this.deleteFileInfoFromFirebase(item.name.split("__")[0], uid)
+              ))
+          }
+          return from(deleteObject(fileRef)).pipe(
+            concatMap(_=>this.deleteFileInfoFromFirebase(item.name.split("__")[0], uid)
+            )) 
+    }
 
   getFileMetadata(fullPath: string) {
     //fullPath contains filename
@@ -189,18 +243,20 @@ export class FileuploadService {
   }
 
   getThumbnails(fullPath: string) {
-    const getThumbnail$ = of("").pipe(delay(2000),
-      switchMap(_=>this.downloadFile(fullPath).pipe(
-        switchMap((url) => {
-        console.log(url)
-        return this._httpClient
-          .get(url, {
-            responseType: 'blob',
+    const getThumbnail$ = of('').pipe(
+      delay(2000),
+      switchMap((_) =>
+        this.downloadFile(fullPath).pipe(
+          switchMap((url) => {
+            console.log(url);
+            return this._httpClient.get(url, {
+              responseType: 'blob',
+            });
           })
-          })))
-    )
-    
-   
+        )
+      )
+    );
+
     return getThumbnail$.pipe(
       retry(),
       catchError((err) => {
@@ -220,5 +276,29 @@ export class FileuploadService {
     });
 
     return filesURLS$;
+  }
+
+  saveFileInfoToDatabase(fileData: IFileData, uid: string) {
+    const filesCollection = this._firebase.collection(
+      `/users/${uid}/files`
+    );
+    const id = filesCollection.doc().ref.id
+    return from(filesCollection.doc(id).set(fileData)).pipe(map(r=>id));
+  }
+
+  deleteFileInfoFromFirebase(fileName: string, uid: string){
+    const  filesCollection = this._firebase.collection(
+      `/users/${uid}/files`
+    );
+    const id = fileName.split("__")[0]
+    console.log('id', id)
+    return from(filesCollection.ref.doc(id).delete())
+  }
+
+  searchInFiles(text: string){
+    const collectionPath = `/users/${this._user?.uid}/files`
+    return this._firebase.collection<{searchName: string}>(`/users/${this._user?.uid}/files`, 
+      ref=>ref.orderBy('searchName').startAt(text.toLocaleLowerCase()).endAt(text.toLocaleLowerCase() + "\uf8ff")
+      ).valueChanges();
   }
 }

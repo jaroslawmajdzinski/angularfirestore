@@ -1,1 +1,14 @@
-<div class="w-full h-full flex items-center justify-center" #imgContainer></div>
+<div
+ (click)="previewOpen=!previewOpen"
+ 
+ class="w-full h-full flex items-center justify-center"
+  cdkOverlayOrigin
+  #trigger = "cdkOverlayOrigin"
+  #thumbContainer
+></div>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="previewOpen">
+  <div  @showPreview class="overlay rounded-sm">
+    <div class="corner"></div>
+    <img [src]="imgSrc" />
+  </div>
+</ng-template>

@@ -7,16 +7,23 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import {
   EMPTY,
+  Observable,
+  ObservedValueOf,
   Subscription,
   catchError,
   combineLatestWith,
   concat,
   concatMap,
+  debounceTime,
   delay,
+  distinctUntilChanged,
   exhaustMap,
   filter,
   forkJoin,
+  fromEvent,
+  map,
   mergeMap,
+  switchMap,
   take,
   tap,
 } from 'rxjs';
@@ -84,6 +91,7 @@ export class FilesmanagementComponent implements OnInit {
   @ViewChild('fileDownload') anchor!: ElementRef<HTMLAnchorElement>;
   @ViewChild('selectAll') selectAll!: ElementRef<HTMLInputElement>;
   @ViewChild('drawer') drawer!: MatDrawer;
+  @ViewChild('searchFile')searchFile!: ElementRef<HTMLInputElement>
 
   filesList: TFileList[] = [];
   private _sub = new Subscription();
@@ -91,6 +99,7 @@ export class FilesmanagementComponent implements OnInit {
 
   fileMetadata!: IFileMetadata;
   
+  searchData$!: Observable<{searchName: string}[]> 
 
   constructor(
     public _storageService: FileuploadService,
@@ -121,6 +130,18 @@ export class FilesmanagementComponent implements OnInit {
       )
       .subscribe();
     this._sub.add(sub);
+  }
+
+  ngAfterViewInit(){
+    this.searchData$ = fromEvent(this.searchFile.nativeElement, "keyup").pipe(
+      map(_=>this.searchFile.nativeElement.value),
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter(val=>val.length>0),
+      switchMap(val=>this._storageService.searchInFiles(val).pipe(
+        tap(item=>console.log(item))
+      ))
+    )
   }
 
   top(index: number){
@@ -188,7 +209,7 @@ export class FilesmanagementComponent implements OnInit {
         ],
       }).pipe(
         filter((res) => res !== 'dismiss' && res !== undefined),
-        concatMap((_) => this._storageService.deleteFile(path).pipe(
+        concatMap((_) =>this._storageService.deleteFile( this.filesList[idx]).pipe(
           tap(_=>{
             this.filesList.splice(idx,1)
             this.filesList = [...this.filesList]
@@ -241,16 +262,7 @@ export class FilesmanagementComponent implements OnInit {
     })
       .pipe(
         filter((res) => res !== 'dismiss' && res !== undefined),
-        concatMap(() =>{
-          const thumbPath = this.filesList[idx].thumbFullPath || ""
-          if(thumbPath.length>0){
-            return this._storageService.deleteFile(thumbPath)
-          .pipe(
-              concatMap(_=>this._storageService.deleteFile(this.filesList[idx].fullPath))
-          )
-         }
-          return this._storageService.deleteFile(this.filesList[idx].fullPath)
-        }
+        concatMap((res) =>this._storageService.deleteFile(this.filesList[idx])
         ),
         tap(() => this._managementServise.emitCurrPath()),
         catchError(this.errorHandler)
@@ -273,13 +285,9 @@ export class FilesmanagementComponent implements OnInit {
           forkJoin(
             this.filesList
               .filter((item) => item.selected && !item.isDirectory)
-              .map((item) =>{
-                const thumbPath = item.thumbFullPath || ""
-               if(thumbPath.length>0){
-                return concat(this._storageService.deleteFile(item.fullPath), this._storageService.deleteFile(thumbPath) )
-               }
-                return  this._storageService.deleteFile(item.fullPath)
-              })
+              .map((item) =>
+                 this._storageService.deleteFile(item)
+              )
           ).pipe(
             tap(() => this._managementServise.emitCurrPath()),
             catchError(this.errorHandler)

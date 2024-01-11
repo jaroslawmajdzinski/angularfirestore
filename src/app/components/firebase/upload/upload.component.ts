@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef,  ViewChild } from '@angular/core';
 
 import {
   EMPTY,
@@ -6,10 +6,9 @@ import {
   Subscription,
   catchError,
   concatMap,
-  forkJoin,
   mergeMap,
   scan,
-  take,
+  switchMap,
   tap,
 } from 'rxjs';
 import { FileuploadService } from 'src/app/firebase/fileupload.service';
@@ -197,29 +196,24 @@ export class UploadComponent {
       item
     )
     .pipe(
-      scan((progress, curr: UploadTaskSnapshot | string ) => {
-        if (typeof curr!=='string') {
-            item.progress = Math.ceil((curr.bytesTransferred * 100) / curr.totalBytes)
-        }
-        return curr;
-      }),
-      tap(url=>{
-        if(typeof url ==='string'){
+      tap(data=>{
+        
         this._mangement.newFile({
-          name: item.file.name,
+          name: data.fileName,
           progress: 0,
           selected: false,
           isDirectory: false,
           loaded: false,
-          fullPath: url,
+          fullPath: data.url,
           uploadPath: item.pathToUpload,
-          thumbFullPath: item.file.type.includes('image')? this._uploadService.getUploadPath(item.pathToUpload) + "/thumb_" + item.file.name : ""
+          thumbFullPath: item.file.type.includes('image')? this._uploadService.getUploadPath(item.pathToUpload) + "/thumb_" + data.fileName : ""
           });
-          console.log('thumb', this._uploadService.getUploadPath(item.pathToUpload) + "/thumb_" + item.file.name )  
+          
         const idx = this.filesInProgress.findIndex(item=>item.file.name===item.file.name)
         this.filesInProgress.splice(idx, 1)
-      }
+        
        }),
+       
       catchError(err=>{
         console.error(err.message)
         return EMPTY

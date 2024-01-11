@@ -1,0 +1,21 @@
+.overlay{
+    width: 200px;
+   // height: 210px;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transform-origin: top left;
+    @apply border-[1px] dark:border-primary-500 border-primary-300 shadow-md relative;
+    .corner{
+        @apply absolute top-[-5px] left-[20px] w-[10px] h-[10px] border-t-[1px] border-l-[1px] border-primary-300 z-[40] rotate-45 bg-primary-100 shadow-md;
+    }
+    img{
+        position: relative;
+        z-index: 50;
+        width: 200px;
+        height: auto;
+        object-fit: contain;
+    }
+}

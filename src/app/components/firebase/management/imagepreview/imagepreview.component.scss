@@ -1,0 +1,16 @@
+.size{
+    width: 200px;
+   // height: 210px;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transform-origin: top left;
+    @apply border-[1px] dark:border-primary-500 border-primary-300 rounded-md;
+    img{
+        width: 200px;
+        height: auto;
+        object-fit: contain;
+    }
+}
